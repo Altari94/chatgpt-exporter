@@ -24,6 +24,7 @@
     "dev": "vite",
     "build": "vite build",
     "test": "tsc --noEmit",
+    "test:core": "node scripts/run-core-tests.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepare": "husky"
@@ -71,6 +72,6 @@
     "vite": "^5.3.2"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "pnpm exec eslint"
+    "*.{js,jsx,ts,tsx}": "corepack pnpm exec eslint"
   }
 }

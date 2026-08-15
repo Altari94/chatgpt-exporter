@@ -1,0 +1,78 @@
+[
+  {
+    "id": "fixture-simple-001",
+    "title": "Synthetischer Testdialog",
+    "create_time": 1700000000,
+    "update_time": 1700000060,
+    "current_node": "a1",
+    "is_archived": false,
+    "moderation_results": [],
+    "mapping": {
+      "root": { "id": "root", "children": ["u1"] },
+      "u1": { "id": "u1", "parent": "root", "children": ["a1"], "message": { "author": { "role": "user", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic question"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a1": { "id": "a1", "parent": "u1", "children": [], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic answer"] }, "metadata": {}, "recipient": "all", "weight": 1 } }
+    }
+  },
+  {
+    "id": "fixture-branch-001",
+    "title": "Synthetischer Branch-Test",
+    "create_time": 1700000100,
+    "update_time": 1700000300,
+    "current_node": "a2b",
+    "is_archived": false,
+    "moderation_results": [],
+    "mapping": {
+      "root": { "id": "root", "children": ["u1"] },
+      "u1": { "id": "u1", "parent": "root", "children": ["a2a", "a2b"], "message": { "author": { "role": "user", "metadata": {} }, "content": { "content_type": "text", "parts": ["Choose a branch"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a2a": { "id": "a2a", "parent": "u1", "children": [], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["First branch"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a2b": { "id": "a2b", "parent": "u1", "children": [], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["Current branch"] }, "metadata": {}, "recipient": "all", "weight": 1 } }
+    }
+  },
+  {
+    "id": "fixture-code-001",
+    "title": "Synthetischer Code- und Quellen-Test",
+    "create_time": 1700000400,
+    "update_time": 1700000500,
+    "current_node": "a1",
+    "is_archived": false,
+    "moderation_results": [],
+    "mapping": {
+      "root": { "id": "root", "children": ["u1"] },
+      "u1": { "id": "u1", "parent": "root", "children": ["a1"], "message": { "author": { "role": "user", "metadata": {} }, "content": { "content_type": "text", "parts": ["Show a harmless example"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a1": { "id": "a1", "parent": "u1", "children": [], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "code", "language": "typescript", "text": "export const answer = 42" }, "metadata": { "content_references": [{ "type": "webpage", "title": "Synthetic source", "url": "https://example.invalid/source" }] }, "recipient": "all", "weight": 1 } }
+    }
+  },
+  {
+    "id": "fixture-multimodal-001",
+    "title": "Synthetischer Multimodal-Test",
+    "create_time": 1700000600,
+    "update_time": 1700000700,
+    "current_node": "a1",
+    "is_archived": false,
+    "moderation_results": [],
+    "mapping": {
+      "root": { "id": "root", "children": ["u1"] },
+      "u1": { "id": "u1", "parent": "root", "children": ["a1"], "message": { "author": { "role": "user", "metadata": {} }, "content": { "content_type": "multimodal_text", "parts": ["Synthetic attachment", { "content_type": "image_asset_pointer", "asset_pointer": "sediment://fixture-image" }, { "content_type": "audio_transcription", "text": "Synthetic audio" }] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a1": { "id": "a1", "parent": "u1", "children": [], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic multimodal response"] }, "metadata": {}, "recipient": "all", "weight": 1 } }
+    }
+  },
+  {
+    "id": "fixture-long-001",
+    "title": "Synthetischer Langdialog",
+    "create_time": 1700000800,
+    "update_time": 1700001200,
+    "current_node": "a4",
+    "is_archived": false,
+    "moderation_results": [],
+    "mapping": {
+      "root": { "id": "root", "children": ["u1"] },
+      "u1": { "id": "u1", "parent": "root", "children": ["a1"], "message": { "author": { "role": "user", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic turn one"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a1": { "id": "a1", "parent": "u1", "children": ["u2"], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic response one"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "u2": { "id": "u2", "parent": "a1", "children": ["a2"], "message": { "author": { "role": "user", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic turn two"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a2": { "id": "a2", "parent": "u2", "children": ["u3"], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic response two"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "u3": { "id": "u3", "parent": "a2", "children": ["a3"], "message": { "author": { "role": "user", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic turn three"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a3": { "id": "a3", "parent": "u3", "children": ["a4"], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic response three"] }, "metadata": {}, "recipient": "all", "weight": 1 } },
+      "a4": { "id": "a4", "parent": "a3", "children": [], "message": { "author": { "role": "assistant", "metadata": {} }, "content": { "content_type": "text", "parts": ["Synthetic final response"] }, "metadata": {}, "recipient": "all", "weight": 1 } }
+    }
+  }
+]

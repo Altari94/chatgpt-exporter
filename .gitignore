@@ -11,6 +11,7 @@ node_modules
 *.local
 .turbo
 .tmp
+dist-extension
 
 # Editor directories and files
 .idea

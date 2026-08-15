@@ -65,6 +65,7 @@
     "@types/mdast": "^3.0.15",
     "@types/node": "^20.11.20",
     "@types/unist": "^2.0.10",
+    "esbuild": "0.21.5",
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "katex": "^0.16.11",

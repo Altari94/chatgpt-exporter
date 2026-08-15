@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
-import { MESSAGE_SOURCE, isCaptureTestRequest, isCaptureTestResult } from '../../.tmp/extension-build/protocol.js'
+import { CaptureError, fetchCurrentConversation, getConversationId } from '../../dist-extension/chatgpt-source.js'
+import { MESSAGE_SOURCE, isCaptureTestRequest, isCaptureTestResult } from '../../dist-extension/protocol.js'
 
 test('accepts only valid page bridge requests', () => {
     assert.equal(isCaptureTestRequest({
@@ -39,4 +40,25 @@ test('build output has narrow MV3 permissions', async () => {
     assert.equal(manifest.background.service_worker, 'service-worker.js')
     assert.deepEqual(manifest.content_scripts[0].js, ['content.js'])
     assert.equal(manifest.web_accessible_resources[0].resources[0], 'page-bridge.js')
+})
+
+test('extracts the current conversation and preserves response text', async () => {
+    const responseText = '{"title":"Raw","mapping":{}}'
+    assert.equal(getConversationId('https://chatgpt.com/c/conversation-1'), 'conversation-1')
+    assert.throws(() => getConversationId('https://chatgpt.com/'), CaptureError)
+
+    const requested = []
+    const capture = await fetchCurrentConversation('https://chatgpt.com/c/conversation-1', async (url, options) => {
+        requested.push({ url: String(url), options })
+        if (String(url).endsWith('/api/auth/session')) {
+            return new Response(JSON.stringify({ accessToken: 'test-token' }), { status: 200 })
+        }
+        return new Response(responseText, { status: 200 })
+    })
+
+    assert.equal(requested[0].url, 'https://chatgpt.com/api/auth/session')
+    assert.equal(requested[1].url, 'https://chatgpt.com/backend-api/conversation/conversation-1')
+    assert.equal(requested[1].options.headers.Authorization, 'Bearer test-token')
+    assert.equal(capture.text, responseText)
+    assert.deepEqual(capture.value, { title: 'Raw', mapping: {} })
 })

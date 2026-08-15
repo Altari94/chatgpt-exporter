@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "ChatGPT Exporter – Development Shell",
-  "version": "0.3.0",
-  "description": "Development shell for the ChatGPT Exporter Chrome extension.",
+  "name": "ChatGPT Exporter",
+  "version": "0.4.0",
+  "description": "Capture ChatGPT conversations as raw JSON from Chrome.",
   "permissions": ["storage"],
   "host_permissions": [
     "https://chatgpt.com/*",

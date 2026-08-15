@@ -5,6 +5,7 @@ import {
     isCaptureTestRequest,
     isRuntimeCaptureTestResponse,
 } from './protocol'
+import { captureCurrentConversation, formatCaptureError } from './raw-download'
 
 injectPageBridge()
 
@@ -40,6 +41,14 @@ window.addEventListener('message', (event: MessageEvent<unknown>) => {
 })
 
 chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
+    if (isDownloadRequest(message)) {
+        captureCurrentConversation().then(result => sendResponse(result)).catch((error: unknown) => sendResponse({
+            ok: false,
+            errorMessage: formatCaptureError(error),
+            errorCode: error instanceof Error && 'code' in error ? String(error.code) : 'UNKNOWN',
+        }))
+        return true
+    }
     if (!isPopupPing(message)) return false
     sendResponse({ ok: true })
     return false
@@ -54,4 +63,8 @@ function injectPageBridge() {
 
 function isPopupPing(value: unknown): value is { type: 'POPUP_PING' } {
     return typeof value === 'object' && value !== null && 'type' in value && value.type === 'POPUP_PING'
+}
+
+function isDownloadRequest(value: unknown): value is { type: 'DOWNLOAD_CURRENT_CONVERSATION' } {
+    return typeof value === 'object' && value !== null && 'type' in value && value.type === 'DOWNLOAD_CURRENT_CONVERSATION'
 }

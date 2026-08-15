@@ -1,11 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "extension/src",
+    "rootDir": ".",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": false,
     "outDir": ".tmp/extension-build"
   },
-  "include": ["extension/src/**/*.ts"]
+  "include": ["extension/src/**/*.ts", "src/core/**/*.ts"]
 }

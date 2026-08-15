@@ -27,6 +27,17 @@ export interface RuntimeCaptureTestResponse {
     ok: boolean
 }
 
+export interface DownloadCurrentRequest {
+    type: 'DOWNLOAD_CURRENT_CONVERSATION'
+}
+
+export interface DownloadCurrentResponse {
+    ok: boolean
+    fileName?: string
+    errorCode?: string
+    errorMessage?: string
+}
+
 export function isCaptureTestRequest(value: unknown): value is CaptureTestRequest {
     if (!isRecord(value)) return false
     return value.source === MESSAGE_SOURCE

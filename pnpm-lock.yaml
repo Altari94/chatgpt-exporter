@@ -100,6 +100,9 @@ devDependencies:
   '@types/unist':
     specifier: ^2.0.10
     version: 2.0.10
+  esbuild:
+    specifier: 0.21.5
+    version: 0.21.5
   eslint:
     specifier: ^8.57.0
     version: 8.57.0

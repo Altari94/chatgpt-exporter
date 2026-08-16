@@ -29,6 +29,10 @@ Die Chrome Extension ist das primäre Produkt: Ein Raw-JSON-Download steht im Vo
 
 Export All lädt bis zu 1.000 sichtbare Chats paginiert und startet je Chat einen einzelnen Raw-JSON-Download. ZIP-Bündel und PNG-Screenshot werden bewusst aus dem Chrome-Produkt gestrichen. Raw JSON bleibt die einzige verlustfreie Quelle.
 
+Die Medienvollständigkeit ist noch nicht erreicht. Bild- und Medienexport ist in
+[v0.10.0](./MILESTONE_V0.10.md) als Release-Blocker vorgemerkt und muss vor der
+ersten öffentlichen Community-Veröffentlichung umgesetzt und geprüft werden.
+
 ## Gate
 
 - `pnpm test`

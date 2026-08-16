@@ -1,3 +1,4 @@
+import { createCaptureEnvelope } from './http-destination'
 import {
     type CaptureTestResult,
     MESSAGE_SOURCE,
@@ -5,7 +6,11 @@ import {
     isCaptureTestRequest,
     isRuntimeCaptureTestResponse,
 } from './protocol'
-import { captureCurrentConversation, formatCaptureError } from './raw-download'
+import {
+    captureCurrentConversation,
+    captureCurrentConversationRecord,
+    formatCaptureError,
+} from './raw-download'
 
 injectPageBridge()
 
@@ -49,6 +54,19 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
         }))
         return true
     }
+    if (isEndpointRequest(message)) {
+        captureCurrentConversationRecord()
+            .then(record => chrome.runtime.sendMessage({
+                type: 'SEND_CAPTURE_TO_ENDPOINT',
+                envelope: createCaptureEnvelope(record),
+            }))
+            .then(response => sendResponse(response))
+            .catch((error: unknown) => sendResponse({
+                ok: false,
+                errorMessage: formatCaptureError(error),
+            }))
+        return true
+    }
     if (!isPopupPing(message)) return false
     sendResponse({ ok: true })
     return false
@@ -67,4 +85,8 @@ function isPopupPing(value: unknown): value is { type: 'POPUP_PING' } {
 
 function isDownloadRequest(value: unknown): value is { type: 'DOWNLOAD_CURRENT_CONVERSATION' } {
     return typeof value === 'object' && value !== null && 'type' in value && value.type === 'DOWNLOAD_CURRENT_CONVERSATION'
+}
+
+function isEndpointRequest(value: unknown): value is { type: 'SEND_CURRENT_TO_ENDPOINT' } {
+    return typeof value === 'object' && value !== null && 'type' in value && value.type === 'SEND_CURRENT_TO_ENDPOINT'
 }

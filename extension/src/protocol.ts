@@ -38,6 +38,16 @@ export interface DownloadCurrentResponse {
     errorMessage?: string
 }
 
+export interface SendCurrentToEndpointRequest {
+    type: 'SEND_CURRENT_TO_ENDPOINT'
+}
+
+export interface EndpointActionResponse {
+    ok: boolean
+    status?: number
+    errorMessage?: string
+}
+
 export function isCaptureTestRequest(value: unknown): value is CaptureTestRequest {
     if (!isRecord(value)) return false
     return value.source === MESSAGE_SOURCE

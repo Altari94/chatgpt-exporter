@@ -40,6 +40,14 @@ await build({
     platform: 'browser',
     target: 'chrome120',
 })
+await build({
+    entryPoints: [path.join(root, 'extension/src/http-destination.ts')],
+    bundle: true,
+    format: 'esm',
+    outfile: path.join(output, 'http-destination.js'),
+    platform: 'browser',
+    target: 'chrome120',
+})
 await cp(path.join(source, 'manifest.json'), path.join(output, 'manifest.json'))
 await cp(path.join(source, 'popup.html'), path.join(output, 'popup.html'))
 

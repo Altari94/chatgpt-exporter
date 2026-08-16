@@ -1,6 +1,19 @@
+import { type CaptureEnvelope, sendEnvelope, testEndpoint } from './http-destination'
 import type { RuntimeCaptureTestRequest, RuntimeCaptureTestResponse } from './protocol'
 
 chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
+    if (isSendCaptureRequest(message)) {
+        sendConfiguredEnvelope(message.envelope)
+            .then(sendResponse)
+            .catch((error: unknown) => sendResponse({ ok: false, errorMessage: error instanceof Error ? error.message : 'Versand fehlgeschlagen.' }))
+        return true
+    }
+    if (isEndpointTestRequest(message)) {
+        testConfiguredEndpoint()
+            .then(sendResponse)
+            .catch((error: unknown) => sendResponse({ ok: false, errorMessage: error instanceof Error ? error.message : 'Endpoint-Test fehlgeschlagen.' }))
+        return true
+    }
     if (!isRuntimeCaptureTestRequest(message)) return false
 
     const response: RuntimeCaptureTestResponse = {
@@ -11,6 +24,30 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
     sendResponse(response)
     return false
 })
+
+async function sendConfiguredEnvelope(envelope: CaptureEnvelope) {
+    const settings = await chrome.storage.local.get(['httpEndpoint'])
+    const endpoint = typeof settings.httpEndpoint === 'string' ? settings.httpEndpoint : ''
+    if (!endpoint) throw new Error('Bitte zuerst einen HTTP-Endpoint konfigurieren.')
+    return sendEnvelope(endpoint, envelope)
+}
+
+async function testConfiguredEndpoint() {
+    const settings = await chrome.storage.local.get(['httpEndpoint'])
+    const endpoint = typeof settings.httpEndpoint === 'string' ? settings.httpEndpoint : ''
+    if (!endpoint) throw new Error('Bitte zuerst einen HTTP-Endpoint konfigurieren.')
+    return testEndpoint(endpoint)
+}
+
+function isSendCaptureRequest(value: unknown): value is { type: 'SEND_CAPTURE_TO_ENDPOINT'; envelope: CaptureEnvelope } {
+    return typeof value === 'object' && value !== null
+        && 'type' in value && value.type === 'SEND_CAPTURE_TO_ENDPOINT'
+        && 'envelope' in value && typeof value.envelope === 'object' && value.envelope !== null
+}
+
+function isEndpointTestRequest(value: unknown): value is { type: 'TEST_HTTP_ENDPOINT' } {
+    return typeof value === 'object' && value !== null && 'type' in value && value.type === 'TEST_HTTP_ENDPOINT'
+}
 
 function isRuntimeCaptureTestRequest(value: unknown): value is RuntimeCaptureTestRequest {
     if (typeof value !== 'object' || value === null) return false

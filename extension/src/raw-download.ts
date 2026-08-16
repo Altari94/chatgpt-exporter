@@ -6,18 +6,22 @@ export interface DownloadResult {
     fileName: string
 }
 
-export async function captureCurrentConversation(): Promise<DownloadResult> {
+export async function captureCurrentConversationRecord() {
     const response = await fetchCurrentConversation()
-    const record = captureResponse<Record<string, unknown>>(response.text, {
+    return captureResponse<Record<string, unknown>>(response.text, {
         kind: 'chatgpt-conversation',
         conversationId: response.conversationId,
         url: response.url,
     })
+}
+
+export async function captureCurrentConversation(): Promise<DownloadResult> {
+    const record = await captureCurrentConversationRecord()
     const derived = withNormalization(record, raw => ({
         title: typeof raw.title === 'string' ? raw.title : 'ChatGPT Conversation',
         createTime: typeof raw.create_time === 'number' ? raw.create_time : undefined,
     }))
-    const fileName = buildFileName(derived.normalized?.title, response.conversationId)
+    const fileName = buildFileName(derived.normalized?.title, record.source.conversationId ?? 'conversation')
     downloadText(fileName, rawText(record))
     return { ok: true, fileName }
 }

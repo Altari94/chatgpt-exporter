@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { CaptureError, fetchCurrentConversation, getConversationId } from '../../dist-extension/chatgpt-source.js'
+import { createCaptureEnvelope, sendEnvelope, testEndpoint, validateEndpoint } from '../../dist-extension/http-destination.js'
 import { MESSAGE_SOURCE, isCaptureTestRequest, isCaptureTestResult } from '../../dist-extension/protocol.js'
 
 test('accepts only valid page bridge requests', () => {
@@ -61,4 +62,47 @@ test('extracts the current conversation and preserves response text', async () =
     assert.equal(requested[1].options.headers.Authorization, 'Bearer test-token')
     assert.equal(capture.text, responseText)
     assert.deepEqual(capture.value, { title: 'Raw', mapping: {} })
+})
+
+test('creates a versioned raw capture envelope without losing source data', () => {
+    const envelope = createCaptureEnvelope({
+        source: { kind: 'chatgpt-web', conversationId: 'conversation-1', url: 'https://chatgpt.com/c/conversation-1' },
+        raw: { text: '{"mapping":{}}', value: { mapping: {} } },
+    })
+    assert.deepEqual(envelope, {
+        schemaVersion: 1,
+        source: { kind: 'chatgpt-web', conversationId: 'conversation-1', url: 'https://chatgpt.com/c/conversation-1' },
+        raw: { text: '{"mapping":{}}', value: { mapping: {} } },
+    })
+})
+
+test('sends an explicit JSON POST and reports successful status', async () => {
+    const requests = []
+    const result = await sendEnvelope('https://example.test/captures', { schemaVersion: 1, source: { kind: 'chatgpt-web', conversationId: 'id', url: 'https://chatgpt.com/c/id' }, raw: { text: '{}', value: {} } }, async (url, options) => {
+        requests.push({ url: String(url), options })
+        return new Response('', { status: 202 })
+    })
+    assert.deepEqual(result, { ok: true, status: 202 })
+    assert.equal(requests[0].options.method, 'POST')
+    assert.equal(requests[0].options.headers['content-type'], 'application/json')
+    assert.deepEqual(JSON.parse(requests[0].options.body), { schemaVersion: 1, source: { kind: 'chatgpt-web', conversationId: 'id', url: 'https://chatgpt.com/c/id' }, raw: { text: '{}', value: {} } })
+})
+
+test('rejects unsafe endpoint schemes and non-success responses', async () => {
+    assert.throws(() => validateEndpoint('file:///tmp/capture.json'), /http/)
+    await assert.rejects(() => sendEnvelope('https://example.test/captures', { schemaVersion: 1, source: { kind: 'chatgpt-web', conversationId: '', url: '' }, raw: { text: '', value: {} } }, async () => new Response('', { status: 503 })), /HTTP 503/)
+})
+
+test('aborts requests after the configured timeout', async () => {
+    await assert.rejects(() => sendEnvelope('https://example.test/captures', { schemaVersion: 1, source: { kind: 'chatgpt-web', conversationId: '', url: '' }, raw: { text: '', value: {} } }, async (_url, options) => new Promise((_resolve, reject) => {
+        options.signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true })
+    }), 1), /nicht rechtzeitig/)
+})
+
+test('tests endpoint reachability with GET', async () => {
+    const result = await testEndpoint('https://example.test/health', async (_url, options) => {
+        assert.equal(options.method, 'GET')
+        return new Response('', { status: 200 })
+    })
+    assert.deepEqual(result, { ok: true, status: 200 })
 })

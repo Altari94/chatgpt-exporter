@@ -7,6 +7,13 @@ declare namespace chrome {
         }
     }
 
+    namespace storage {
+        const local: {
+            get(keys: string[]): Promise<Record<string, unknown>>
+            set(items: Record<string, unknown>): Promise<void>
+        }
+    }
+
     namespace tabs {
         function query(queryInfo: { active: boolean; currentWindow: boolean }): Promise<Array<{ id?: number }>>
         function sendMessage(tabId: number, message: unknown): Promise<unknown>

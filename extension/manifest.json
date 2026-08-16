@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Exporter",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Capture ChatGPT conversations as raw JSON from Chrome.",
   "permissions": ["storage"],
   "host_permissions": [

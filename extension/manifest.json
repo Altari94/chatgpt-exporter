@@ -3,6 +3,12 @@
   "name": "ChatGPT Exporter",
   "version": "0.9.0",
   "description": "Export ChatGPT conversations from Chrome as raw JSON and useful derived formats.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "permissions": ["storage"],
   "optional_host_permissions": [
     "http://*/*",
@@ -17,6 +23,12 @@
   },
   "action": {
     "default_title": "ChatGPT Exporter",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    },
     "default_popup": "popup.html"
   },
   "content_scripts": [

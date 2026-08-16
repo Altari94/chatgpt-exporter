@@ -41,6 +41,8 @@ test('build output has narrow MV3 permissions', async () => {
     ])
     assert.deepEqual(manifest.optional_host_permissions, ['http://*/*', 'https://*/*'])
     assert.equal(manifest.background.service_worker, 'service-worker.js')
+    assert.equal(manifest.icons['128'], 'icons/icon-128.png')
+    assert.equal(manifest.action.default_icon['48'], 'icons/icon-48.png')
     assert.deepEqual(manifest.content_scripts[0].js, ['content.js'])
     assert.equal(manifest.web_accessible_resources[0].resources[0], 'page-bridge.js')
 })

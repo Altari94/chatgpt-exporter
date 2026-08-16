@@ -17,3 +17,10 @@ Die Fork-Version ist bewusst kleiner als Upstream. PNG-Screenshots und ZIP-Batch
 ## Persönlicher Maintainer-Fokus
 
 Der Fork wird primär nach Marcels eigenem Bedarf weiterentwickelt. Das schließt Community-Nutzung, Issues und externe Verbesserungen nicht aus; es bedeutet nur, dass keine langfristige Zusage für vollständige Feature-Parität oder regelmäßige Upstream-Synchronisation gemacht wird. Der persönliche Ursprung und die Namensnennung bleiben in dieser Dokumentation transparent.
+
+## Aktuelles Branding
+
+Die Extension nutzt vorläufig das Minimal-Studios-Logo als Icon auf weißem
+Hintergrund. Das Branding ist bewusst von der Exportarchitektur getrennt und
+kann später ersetzt werden, ohne Capture-, Export- oder Berechtigungscode zu
+ändern. Details und Asset-Zuordnung stehen in [BRANDING.md](./BRANDING.md).

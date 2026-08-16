@@ -22,4 +22,4 @@ Danach `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dist-e
 
 PNG-Screenshots und ZIP-Batch-Export gehören bewusst nicht zum Chrome-Produkt. Tampermonkey ist für neue Nutzer nicht erforderlich.
 
-Weitere Details: [Extension-Build](./docs/EXTENSION_BUILD.md), [v0.9-Milestone](./docs/MILESTONE_V0.9.md), [Sicherheitsprüfung](./docs/SECURITY_AND_PRIVACY.md).
+Weitere Details: [Extension-Build](./docs/EXTENSION_BUILD.md), [v0.9-Milestone](./docs/MILESTONE_V0.9.md), [Sicherheitsprüfung](./docs/SECURITY_AND_PRIVACY.md), [Branding](./docs/BRANDING.md).

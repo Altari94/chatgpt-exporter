@@ -50,6 +50,7 @@ await build({
 })
 await cp(path.join(source, 'manifest.json'), path.join(output, 'manifest.json'))
 await cp(path.join(source, 'popup.html'), path.join(output, 'popup.html'))
+await cp(path.join(source, 'icons'), path.join(output, 'icons'), { recursive: true })
 
 console.log(`Extension built at ${path.relative(root, output)}`)
 

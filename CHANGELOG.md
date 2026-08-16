@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.9.0 – Chrome-first export UI and derived single-chat formats
+
+### Added
+
+- modern, accessible popup with Raw JSON as the primary action
+- single-chat Text, Markdown and HTML exports
+- clipboard export with a browser fallback
+- Export All für sichtbare Chats als einzelne Raw-JSON-Dateien
+- paralleler, auf vier Requests begrenzter Abruf der Chatlisten-Seiten
+- HTTP-Destination settings collapsed behind an explicit section
+
+### Scope boundary
+
+The derived formats are projections of the captured raw response. Raw JSON remains the canonical, lossless artifact. Batch ZIP export and DOM screenshot (PNG) are intentionally not part of the Chrome product scope.
+
 ## v0.8.0 – Chrome-first Open-Source-Release
 
 ### Added

@@ -15,7 +15,7 @@ In Chrome `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dis
 corepack pnpm release:build
 ```
 
-Der reproduzierbare Build erzeugt `dist-release/chatgpt-exporter-v0.8.0/` mit:
+Der reproduzierbare Build erzeugt `dist-release/chatgpt-exporter-v0.9.0/` mit:
 
 - `extension/`: primäres Chrome-Extension-Artefakt
 - `legacy-userscript/chatgpt.user.js`: Kompatibilitätsartefakt für bestehende Installationen

@@ -1,29 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ChatGPT Exporter</title>
     <style>
-      :root { color-scheme: light dark; }
-      body { min-width: 240px; margin: 0; padding: 16px; font: 14px system-ui, sans-serif; }
-      h1 { margin: 0 0 12px; font-size: 16px; }
-      p { margin: 0 0 12px; line-height: 1.4; }
-      button { width: 100%; padding: 8px 10px; cursor: pointer; }
-      #status { margin-top: 10px; min-height: 1.4em; }
+      :root { color-scheme: light dark; --bg:#f7f8fb; --card:#fff; --text:#172033; --muted:#687386; --line:#e5e8ef; --accent:#635bff; --accent-2:#5148df; }
+      @media (prefers-color-scheme: dark) { :root { --bg:#10131a; --card:#191e28; --text:#f3f5f8; --muted:#a3adbd; --line:#2c3442; } }
+      * { box-sizing:border-box; } body { width:460px; margin:0; padding:20px; background:var(--bg); color:var(--text); font:14px/1.45 system-ui,-apple-system,sans-serif; }
+      header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; } h1 { margin:0; font-size:18px; letter-spacing:-.02em; } .version { color:var(--muted); font-size:11px; } #language { border:1px solid var(--line); border-radius:7px; padding:3px 5px; background:var(--card); color:var(--text); font-size:11px; }
+      .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px; margin-bottom:12px; box-shadow:0 2px 8px #0000000a; } .primary { background:linear-gradient(135deg,#6d66ff,#5148df); border:0; color:white; }
+      .eyebrow { text-transform:uppercase; letter-spacing:.08em; font-size:10px; font-weight:700; opacity:.78; } h2 { margin:3px 0 4px; font-size:15px; } .hint { margin:0 0 12px; color:var(--muted); } .primary .hint { color:#e5e4ff; }
+      button { border:1px solid var(--line); border-radius:9px; padding:9px 11px; background:transparent; color:inherit; cursor:pointer; font:inherit; font-weight:600; } button:hover { border-color:var(--accent); } button:focus-visible,input:focus-visible { outline:3px solid #938dff66; outline-offset:2px; }
+      .primary button { width:100%; background:white; color:var(--accent-2); border:0; } .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; } .grid button { text-align:left; min-height:42px; }
+      .label { display:block; color:var(--muted); font-size:12px; font-weight:600; margin:10px 0 6px; } input { width:100%; border:1px solid var(--line); border-radius:8px; padding:10px; background:transparent; color:inherit; font:inherit; } .row { display:flex; gap:9px; margin-top:10px; } .row button { flex:1; }
+      details summary { cursor:pointer; font-weight:700; } details[open] summary { margin-bottom:12px; } #status { min-height:20px; margin:12px 2px 0; color:var(--muted); font-size:13px; }
+      #bulk-panel { display:none; margin-top:12px; } #bulk-panel.visible { display:block; } #chat-search { margin:0 0 9px; } #chat-list { max-height:360px; overflow:auto; border:1px solid var(--line); border-radius:10px; } .chat-row { display:flex; gap:11px; align-items:center; padding:10px 11px; border-bottom:1px solid var(--line); cursor:pointer; } .chat-row:last-child { border-bottom:0; } .chat-row input { width:17px; height:17px; flex:0 0 auto; } .chat-title { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; } .bulk-actions { display:flex; gap:9px; margin:9px 0; } .bulk-actions button { flex:1; font-size:13px; } #selection-count { color:var(--muted); font-size:12px; margin:5px 1px 0; }
     </style>
   </head>
   <body>
-    <h1>ChatGPT Exporter</h1>
-    <p>v0.8.0 HTTP-Destination</p>
-    <button id="download" type="button">Aktuellen Chat herunterladen</button>
-    <label for="endpoint">HTTP-Endpoint</label>
-    <input id="endpoint" type="url" placeholder="https://example.test/captures" />
-    <button id="save-endpoint" type="button">Endpoint speichern</button>
-    <button id="test-endpoint" type="button">Endpoint testen</button>
-    <button id="send-endpoint" type="button">Aktuellen Chat senden</button>
-    <button id="ping" type="button">Verbindung testen</button>
-    <p id="status" role="status"></p>
+    <header><h1 data-i18n="appTitle">ChatGPT Exporter</h1><span class="version">v0.9.0</span><select id="language" aria-label="Language"><option value="de">DE</option><option value="en">EN</option><option value="es">ES</option></select></header>
+    <section class="card primary"><div class="eyebrow" data-i18n="rawEyebrow">Rohdaten · empfohlen</div><h2 data-i18n="rawTitle">Aktuellen Chat sichern</h2><p class="hint" data-i18n="rawHint">Originales ChatGPT-JSON für Archiv, Analyse und Second Brain.</p><button id="download" type="button" data-i18n="rawDownload">↓ Raw JSON herunterladen</button></section>
+    <section class="card"><div class="eyebrow" data-i18n="formatsEyebrow">Weitere Formate</div><h2 data-i18n="formatsTitle">Einzelchat exportieren</h2><p class="hint" data-i18n="formatsHint">Abgeleitete Kopien für Lesen, Teilen oder Weiterverarbeitung.</p><div class="grid"><button data-export="text" type="button">Text ↓</button><button data-export="markdown" type="button">Markdown ↓</button><button data-export="html" type="button">HTML ↓</button><button data-export="clipboard" type="button" data-i18n="clipboard">Text in Zwischenablage</button></div></section>
+    <section class="card"><div class="eyebrow" data-i18n="multipleEyebrow">Mehrere Chats</div><h2 data-i18n="multipleTitle">Export All</h2><p class="hint" data-i18n="multipleHint">Wähle einzelne Chats oder alle aus. Jeder Download bleibt eine originale Raw-JSON-Datei.</p><button id="load-chats" type="button" style="width:100%" data-i18n="chooseChats">Chats auswählen</button><div id="bulk-panel"><input id="chat-search" type="search" data-i18n-placeholder="searchChats" placeholder="Chats suchen …" aria-label="Chats suchen" /><div class="bulk-actions"><button id="select-all" type="button" data-i18n="selectAll">Alle auswählen</button><button id="clear-all" type="button" data-i18n="clearAll">Auswahl leeren</button></div><div id="selection-count"></div><div id="chat-list" role="listbox" aria-label="Chats"></div><div class="row"><button id="start-export" type="button" data-i18n="downloadSelection">Auswahl herunterladen</button><button id="cancel-export" type="button" data-i18n="cancel">Abbrechen</button></div></div></section>
+    <section class="card"><details><summary data-i18n="httpTitle">HTTP-Destination</summary><label class="label" for="endpoint" data-i18n="endpoint">Endpoint</label><input id="endpoint" type="url" placeholder="https://example.test/captures" /><div class="row"><button id="save-endpoint" type="button" data-i18n="save">Speichern</button><button id="test-endpoint" type="button" data-i18n="test">Testen</button></div><button id="send-endpoint" type="button" style="width:100%;margin-top:8px" data-i18n="sendCurrent">Aktuellen Chat senden</button></details></section>
+    <button id="ping" type="button" style="width:100%" data-i18n="connection">Verbindung testen</button><p id="status" role="status" aria-live="polite"></p>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -12,7 +12,7 @@
 [release-image]: https://img.shields.io/github/v/release/pionxzh/chatgpt-exporter?color=blue
 [release-url]: https://github.com/pionxzh/chatgpt-exporter/releases/latest
 
-English documentation is currently the maintained release guide. The translated legacy pages may still describe the userscript installation path.
+Documentation: [Deutsch](./README.de.md) · [English](./README.md) · [Español](./README.es.md)
 
 ![image](https://github.com/pionxzh/chatgpt-exporter/assets/9910706/1c864670-7912-4484-b4be-bdf5dde51557)
 
@@ -41,8 +41,10 @@ Then load `dist-extension/` through **Load unpacked**.
 
 1. Open a normal ChatGPT conversation at `chatgpt.com/c/...`.
 2. Open the ChatGPT Exporter popup.
-3. Click **Aktuellen Chat herunterladen**.
+3. Click **Raw JSON herunterladen**.
 4. The downloaded JSON preserves the original response text and parsed raw value.
+
+To export multiple chats, choose **Export All**, load the chat list, select individual chats or all chats, and start the download. The operation can be cancelled between conversations.
 
 ### Optional HTTP destination
 
@@ -67,7 +69,6 @@ The fork's development and documentation target the Chrome Extension first.
 - [Text](#text)
 - [HTML](#html)
 - [Markdown](#markdown)
-- [PNG](#screenshot)
 - [JSON](#json)
 
 ## 💡 Example

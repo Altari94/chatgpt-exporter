@@ -1,5 +1,5 @@
 import { captureResponse, rawText, withNormalization } from '../../src/core/capture'
-import { CaptureError, fetchCurrentConversation } from './chatgpt-source'
+import { CaptureError, fetchConversationById, fetchCurrentConversation } from './chatgpt-source'
 
 export interface DownloadResult {
     ok: true
@@ -22,6 +22,19 @@ export async function captureCurrentConversation(): Promise<DownloadResult> {
         createTime: typeof raw.create_time === 'number' ? raw.create_time : undefined,
     }))
     const fileName = buildFileName(derived.normalized?.title, record.source.conversationId ?? 'conversation')
+    downloadText(fileName, rawText(record))
+    return { ok: true, fileName }
+}
+
+export async function captureConversationById(conversationId: string): Promise<DownloadResult> {
+    const response = await fetchConversationById(conversationId)
+    const record = captureResponse<Record<string, unknown>>(response.text, {
+        kind: 'chatgpt-conversation',
+        conversationId: response.conversationId,
+        url: response.url,
+    })
+    const title = typeof record.raw.value.title === 'string' ? record.raw.value.title : 'ChatGPT Conversation'
+    const fileName = buildFileName(title, conversationId)
     downloadText(fileName, rawText(record))
     return { ok: true, fileName }
 }

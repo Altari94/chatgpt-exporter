@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import test from 'node:test'
-import { CaptureError, fetchCurrentConversation, getConversationId } from '../../dist-extension/chatgpt-source.js'
+import { CaptureError, fetchAllConversationSummaries, fetchCurrentConversation, getConversationId } from '../../dist-extension/chatgpt-source.js'
 import { createCaptureEnvelope, sendEnvelope, testEndpoint, validateEndpoint } from '../../dist-extension/http-destination.js'
 import { MESSAGE_SOURCE, isCaptureTestRequest, isCaptureTestResult } from '../../dist-extension/protocol.js'
 
@@ -34,7 +34,7 @@ test('build output has narrow MV3 permissions', async () => {
     const manifest = JSON.parse(await readFile('dist-extension/manifest.json', 'utf8'))
 
     assert.equal(manifest.manifest_version, 3)
-    assert.equal(manifest.version, '0.8.0')
+    assert.equal(manifest.version, '0.9.0')
     assert.deepEqual(manifest.host_permissions, [
         'https://chatgpt.com/*',
         'https://chat.openai.com/*',
@@ -64,6 +64,20 @@ test('extracts the current conversation and preserves response text', async () =
     assert.equal(requested[1].options.headers.Authorization, 'Bearer test-token')
     assert.equal(capture.text, responseText)
     assert.deepEqual(capture.value, { title: 'Raw', mapping: {} })
+})
+
+test('paginates Export All summaries and respects the maximum', async () => {
+    const requests = []
+    const firstPage = Array.from({ length: 100 }, (_, index) => ({ id: `id-${index}`, title: `Chat ${index}` }))
+    const summaries = await fetchAllConversationSummaries('https://chatgpt.com/c/current', 101, async (url) => {
+        requests.push(String(url))
+        if (String(url).endsWith('/api/auth/session')) return new Response(JSON.stringify({ accessToken: 'test-token' }), { status: 200 })
+        if (String(url).includes('offset=0')) return new Response(JSON.stringify({ items: firstPage }), { status: 200 })
+        return new Response(JSON.stringify({ items: [{ id: 'id-100', title: 'Chat 100' }, { id: 'id-101', title: 'Chat 101' }] }), { status: 200 })
+    })
+    assert.equal(summaries.length, 101)
+    assert.equal(summaries.at(-1).id, 'id-100')
+    assert.equal(requests.length, 3)
 })
 
 test('creates a versioned raw capture envelope without losing source data', () => {

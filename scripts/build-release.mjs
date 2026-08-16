@@ -4,7 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const version = '0.8.0'
+const version = '0.9.0'
 const output = path.join(root, 'dist-release', `chatgpt-exporter-v${version}`)
 
 await rm(output, { recursive: true, force: true })

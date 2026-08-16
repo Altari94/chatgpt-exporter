@@ -23,6 +23,10 @@ saveEndpointButton?.addEventListener('click', async () => {
         status.textContent = error instanceof Error ? error.message : 'Ungültiger Endpoint.'
         return
     }
+    if (!await requestEndpointPermission(endpoint)) {
+        status.textContent = 'Kein Zugriff auf die Endpoint-Domain erteilt.'
+        return
+    }
     await chrome.storage.local.set({ httpEndpoint: endpoint })
     status.textContent = 'Endpoint lokal gespeichert.'
 })
@@ -30,6 +34,20 @@ saveEndpointButton?.addEventListener('click', async () => {
 sendEndpointButton?.addEventListener('click', async () => {
     if (!status) return
     status.textContent = 'Sende Capture …'
+    if (endpointInput) {
+        let endpoint: string
+        try {
+            endpoint = validateEndpoint(endpointInput.value)
+        }
+        catch (error) {
+            status.textContent = error instanceof Error ? error.message : 'Ungültiger Endpoint.'
+            return
+        }
+        if (!await requestEndpointPermission(endpoint)) {
+            status.textContent = 'Kein Zugriff auf die Endpoint-Domain erteilt.'
+            return
+        }
+    }
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
     if (!tab.id) return
     try {
@@ -41,10 +59,22 @@ sendEndpointButton?.addEventListener('click', async () => {
     }
 })
 
+async function requestEndpointPermission(endpoint: string): Promise<boolean> {
+    const url = new URL(endpoint)
+    return chrome.permissions.request({ origins: [`${url.origin}/*`] })
+}
+
 testEndpointButton?.addEventListener('click', async () => {
     if (!status) return
     status.textContent = 'Teste HTTP-Endpoint …'
     try {
+        if (endpointInput) {
+            const endpoint = validateEndpoint(endpointInput.value)
+            if (!await requestEndpointPermission(endpoint)) {
+                status.textContent = 'Kein Zugriff auf die Endpoint-Domain erteilt.'
+                return
+            }
+        }
         const response = await chrome.runtime.sendMessage({ type: 'TEST_HTTP_ENDPOINT' }) as { ok?: boolean; status?: number; errorMessage?: string } | undefined
         status.textContent = response?.ok ? `Endpoint erreichbar (HTTP ${response.status}).` : (response?.errorMessage || 'Endpoint-Test fehlgeschlagen.')
     }

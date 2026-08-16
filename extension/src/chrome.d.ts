@@ -14,6 +14,10 @@ declare namespace chrome {
         }
     }
 
+    namespace permissions {
+        function request(permissions: { origins: string[] }): Promise<boolean>
+    }
+
     namespace tabs {
         function query(queryInfo: { active: boolean; currentWindow: boolean }): Promise<Array<{ id?: number }>>
         function sendMessage(tabId: number, message: unknown): Promise<unknown>

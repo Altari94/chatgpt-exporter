@@ -38,6 +38,7 @@ test('build output has narrow MV3 permissions', async () => {
         'https://chatgpt.com/*',
         'https://chat.openai.com/*',
     ])
+    assert.deepEqual(manifest.optional_host_permissions, ['http://*/*', 'https://*/*'])
     assert.equal(manifest.background.service_worker, 'service-worker.js')
     assert.deepEqual(manifest.content_scripts[0].js, ['content.js'])
     assert.equal(manifest.web_accessible_resources[0].resources[0], 'page-bridge.js')

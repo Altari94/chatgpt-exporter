@@ -10171,6 +10171,25 @@ ${sourceList}` : sourceList;
     return sanitize(output2, "");
   };
   const sanitize$1 = /* @__PURE__ */ getDefaultExportFromCjs(sanitizeFilename);
+  function createArtifact(fileName, mimeType, content2) {
+    if (!fileName.trim()) throw new Error("Artifact filename must not be empty.");
+    if (!mimeType.trim()) throw new Error("Artifact MIME type must not be empty.");
+    return { fileName, mimeType, content: content2 };
+  }
+  class BrowserDownloadDestination {
+    deliver(artifact) {
+      const blob = artifact.content instanceof Blob ? artifact.content : new Blob([artifact.content], { type: artifact.mimeType });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = artifact.fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      window.setTimeout(() => URL.revokeObjectURL(url), 1e3);
+    }
+  }
+  const browserDownloadDestination = new BrowserDownloadDestination();
   function noop() {
   }
   function nonNullable(x2) {
@@ -10246,14 +10265,7 @@ ${sourceList}` : sourceList;
     return list2.map((msg) => JSON.stringify(msg)).join("\n");
   }
   function downloadFile(filename, type, content2) {
-    const blob = content2 instanceof Blob ? content2 : new Blob([content2], { type });
-    const url = URL.createObjectURL(blob);
-    const a2 = document.createElement("a");
-    a2.href = url;
-    a2.download = filename;
-    document.body.appendChild(a2);
-    a2.click();
-    document.body.removeChild(a2);
+    browserDownloadDestination.deliver(createArtifact(filename, type, content2));
   }
   function downloadUrl(filename, url) {
     const a2 = document.createElement("a");
@@ -22129,17 +22141,23 @@ ${body2}
 
 `;
   }
-  function copyToClipboard(text2) {
-    try {
-      navigator.clipboard.writeText(text2);
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = text2;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
+  class BrowserClipboardDestination {
+    async deliver(artifact) {
+      try {
+        await navigator.clipboard.writeText(artifact.content);
+      } catch {
+        const textarea = document.createElement("textarea");
+        textarea.value = artifact.content;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
     }
+  }
+  const browserClipboardDestination = new BrowserClipboardDestination();
+  function copyToClipboard(text2) {
+    browserClipboardDestination.deliver(createArtifact("clipboard.txt", "text/plain", text2)).catch(() => void 0);
   }
   async function exportToText() {
     if (!checkIfConversationStarted()) {

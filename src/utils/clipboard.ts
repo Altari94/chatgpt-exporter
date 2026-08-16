@@ -1,14 +1,6 @@
+import { createArtifact } from '../core/destination'
+import { browserClipboardDestination } from '../destination/browser-clipboard'
+
 export function copyToClipboard(text: string) {
-    try {
-        // for modern browsers
-        navigator.clipboard.writeText(text)
-    }
-    catch {
-        const textarea = document.createElement('textarea')
-        textarea.value = text
-        document.body.appendChild(textarea)
-        textarea.select()
-        document.execCommand('copy')
-        document.body.removeChild(textarea)
-    }
+    browserClipboardDestination.deliver(createArtifact('clipboard.txt', 'text/plain', text)).catch(() => undefined)
 }

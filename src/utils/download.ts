@@ -1,15 +1,10 @@
 import sanitize from 'sanitize-filename'
+import { createArtifact } from '../core/destination'
+import { browserDownloadDestination } from '../destination/browser-download'
 import { dateStr, timestamp, unixTimestampToISOString } from './utils'
 
 export function downloadFile(filename: string, type: string, content: string | Blob) {
-    const blob = content instanceof Blob ? content : new Blob([content], { type })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+    browserDownloadDestination.deliver(createArtifact(filename, type, content))
 }
 
 export function downloadUrl(filename: string, url: string) {

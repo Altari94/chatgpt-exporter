@@ -14,6 +14,8 @@
 
 Documentation: [Deutsch](./README.de.md) · [English](./README.md) · [Español](./README.es.md)
 
+Project context: [Project intent](./docs/PROJECT_INTENT.md) · [Developer guide](./docs/DEVELOPER_GUIDE.md) · [Fork maintenance](./docs/FORK_MAINTENANCE.md) · [Upstream comparison](./docs/UPSTREAM_VS_FORK.md)
+
 ![image](https://github.com/pionxzh/chatgpt-exporter/assets/9910706/1c864670-7912-4484-b4be-bdf5dde51557)
 
 ## Install the Chrome Extension (recommended)

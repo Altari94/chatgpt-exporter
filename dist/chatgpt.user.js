@@ -1263,6 +1263,16 @@ html {
   const KEY_EXPORT_ALL_LIMIT = "exporter:export_all_limit";
   const KEY_OAI_LOCALE = "oai/apps/locale";
   const EXPORT_OPERATION_BATCH = 100;
+  class RateLimitError extends Error {
+    constructor(retryAfterHeader) {
+      super("Too Many Requests (429)");
+      /** Milliseconds to wait before retrying. */
+      __publicField(this, "retryAfterMs");
+      this.name = "RateLimitError";
+      const seconds = retryAfterHeader == null ? Number.NaN : Number.parseInt(retryAfterHeader, 10);
+      this.retryAfterMs = Number.isFinite(seconds) && seconds > 0 ? seconds * 1e3 : 3e4;
+    }
+  }
   var _GM_deleteValue = /* @__PURE__ */ (() => typeof GM_deleteValue != "undefined" ? GM_deleteValue : void 0)();
   var _GM_getValue = /* @__PURE__ */ (() => typeof GM_getValue != "undefined" ? GM_getValue : void 0)();
   var _GM_setValue = /* @__PURE__ */ (() => typeof GM_setValue != "undefined" ? GM_setValue : void 0)();
@@ -1496,16 +1506,6 @@ html {
       body: JSON.stringify({ is_visible: false })
     });
     return success;
-  }
-  class RateLimitError extends Error {
-    constructor(retryAfterHeader) {
-      super("Too Many Requests (429)");
-      /** Milliseconds to wait before retrying */
-      __publicField(this, "retryAfterMs");
-      this.name = "RateLimitError";
-      const secs = retryAfterHeader != null ? Number.parseInt(retryAfterHeader, 10) : Number.NaN;
-      this.retryAfterMs = Number.isFinite(secs) && secs > 0 ? secs * 1e3 : 3e4;
-    }
   }
   const RATE_LIMIT_HEADERS = [
     "retry-after",
@@ -22310,6 +22310,9 @@ ${content2}`;
       __publicField(this, "eventEmitter", EventEmitter());
       __publicField(this, "queue", []);
       __publicField(this, "results", []);
+      __publicField(this, "failures", []);
+      __publicField(this, "summaryEmitted", false);
+      __publicField(this, "activeRequest", null);
       __publicField(this, "status", "IDLE");
       __publicField(this, "backoffMultiplier", 2);
       __publicField(this, "backoff");
@@ -22333,16 +22336,21 @@ ${content2}`;
     start() {
       if (this.status === "IDLE") {
         this.total = this.queue.length;
+        this.summaryEmitted = false;
         this.process();
       }
     }
     stop() {
+      if (this.status === "STOPPED" || this.status === "COMPLETED") return;
       this.status = "STOPPED";
-      this.eventEmitter.emit("done", this.results);
+      this.finish();
     }
     clear() {
       this.queue = [];
       this.results = [];
+      this.failures = [];
+      this.summaryEmitted = false;
+      this.activeRequest = null;
       this.status = "IDLE";
       this.backoff = this.minBackoff;
       this.pauseUntil = 0;
@@ -22359,7 +22367,7 @@ ${content2}`;
         return;
       }
       if (this.queue.length === 0) {
-        this.done();
+        this.finish();
         return;
       }
       const remaining = this.pauseUntil - Date.now();
@@ -22371,21 +22379,26 @@ ${content2}`;
       }
       this.status = "IN_PROGRESS";
       const requestObject = this.queue.shift();
+      this.activeRequest = requestObject;
       const { name, request } = requestObject;
       let waitMs = this.backoff;
       try {
         this.progress(name, "processing");
         const result = await request();
+        if (this.isStopped()) return;
         this.results.push(result);
         this.completed++;
         this.progress(name, "processing");
         this.backoff = this.minBackoff;
         requestObject.retries = 0;
       } catch (error2) {
+        if (this.isStopped()) return;
         if (error2 instanceof RateLimitError) {
           this.globalPauses++;
           if (this.globalPauses > MAX_GLOBAL_PAUSES) {
             console.warn("[Exporter] Queue stopped: API rate limit did not clear after", MAX_GLOBAL_PAUSES, "pauses");
+            this.recordFailure(requestObject, error2);
+            this.activeRequest = null;
             this.stop();
             return;
           }
@@ -22397,21 +22410,28 @@ ${content2}`;
           this.progress(name, "rate_limited", Math.round(pauseMs / 1e3));
           console.warn(`[Exporter] Rate limited (429). Pausing queue for ${Math.round(pauseMs / 1e3)}s (pause #${this.globalPauses})`);
           this.queue.unshift(requestObject);
+          this.activeRequest = null;
           waitMs = 0;
         } else {
           console.error(`[Exporter] "${name}" failed:`, error2);
           requestObject.retries++;
-          if (requestObject.retries > MAX_RETRIES) {
-            console.warn(`[Exporter] "${name}" skipped after ${MAX_RETRIES} retries`);
+          if (!isRetryableError(error2) || requestObject.retries > MAX_RETRIES) {
+            console.warn(`[Exporter] "${name}" marked as failed after ${requestObject.retries} attempt(s)`);
+            this.recordFailure(requestObject, error2);
+            this.activeRequest = null;
+            this.completed++;
             waitMs = 0;
           } else {
             this.backoff = Math.min(this.backoff * this.backoffMultiplier, this.maxBackoff);
             waitMs = this.backoff;
             this.progress(name, "retrying");
             this.queue.unshift(requestObject);
+            this.activeRequest = null;
           }
         }
       }
+      if (this.isStopped()) return;
+      this.activeRequest = null;
       await sleep(waitMs);
       this.process();
     }
@@ -22421,13 +22441,44 @@ ${content2}`;
         completed: this.completed,
         currentName: name,
         currentStatus: status,
-        rateLimitWaitSecs
+        rateLimitWaitSecs,
+        succeeded: this.results.length,
+        failed: this.failures.length
       });
     }
-    done() {
+    recordFailure(requestObject, error2) {
+      this.failures.push({
+        name: requestObject.name,
+        attempts: Math.max(1, requestObject.retries),
+        error: error2 instanceof Error ? error2.message : String(error2)
+      });
+    }
+    isStopped() {
+      return this.status === "STOPPED";
+    }
+    finish() {
+      if (this.summaryEmitted) return;
+      this.summaryEmitted = true;
+      const stopped = this.status === "STOPPED";
       this.status = "COMPLETED";
       this.eventEmitter.emit("done", this.results);
+      this.eventEmitter.emit("summary", {
+        total: this.total,
+        completed: this.completed,
+        succeeded: [...this.results],
+        failed: [...this.failures],
+        pending: [
+          ...this.activeRequest ? [this.activeRequest.name] : [],
+          ...this.queue.map((request) => request.name)
+        ],
+        stopped
+      });
     }
+  }
+  function isRetryableError(error2) {
+    if (error2 instanceof TypeError) return true;
+    if (!(error2 instanceof Error)) return false;
+    return /network|timeout|temporar|unavailable|server|5\d\d/i.test(error2.message);
   }
   function FileCode() {
     return /* @__PURE__ */ o$8("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 384 512", className: "w-4 h-4 shrink-0", fill: "currentColor", children: /* @__PURE__ */ o$8("path", { d: "M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM153 289l-31 31 31 31c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L71 337c-9.4-9.4-9.4-24.6 0-33.9l48-48c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9zM265 255l48 48c9.4 9.4 9.4 24.6 0 33.9l-48 48c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l31-31-31-31c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z" }) });
@@ -23039,7 +23090,22 @@ ${content2}`;
           total: totalBatchesRef.current * EXPORT_OPERATION_BATCH
         });
       });
-      return () => off();
+      const offSummary = requestQueue.on("summary", (summary) => {
+        if (summary.failed.length === 0 && summary.pending.length === 0) return;
+        const failedNames = summary.failed.map((item) => item.name).join(", ");
+        const pendingNames = summary.pending.join(", ");
+        const details = [
+          failedNames ? `Fehlgeschlagen: ${failedNames}` : "",
+          pendingNames ? `Nicht verarbeitet: ${pendingNames}` : ""
+        ].filter(Boolean).join("\n");
+        alert(`Der Batch wurde teilweise verarbeitet.
+
+${details}`);
+      });
+      return () => {
+        off();
+        offSummary();
+      };
     }, [requestQueue]);
     p$6(() => {
       const off = archiveQueue.on("progress", (prog) => {

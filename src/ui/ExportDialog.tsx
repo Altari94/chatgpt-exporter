@@ -446,7 +446,20 @@ const DialogContent: FC<DialogContentProps> = ({ format }) => {
                 total: totalBatchesRef.current * EXPORT_OPERATION_BATCH,
             })
         })
-        return () => off()
+        const offSummary = requestQueue.on('summary', (summary) => {
+            if (summary.failed.length === 0 && summary.pending.length === 0) return
+            const failedNames = summary.failed.map(item => item.name).join(', ')
+            const pendingNames = summary.pending.join(', ')
+            const details = [
+                failedNames ? `Fehlgeschlagen: ${failedNames}` : '',
+                pendingNames ? `Nicht verarbeitet: ${pendingNames}` : '',
+            ].filter(Boolean).join('\n')
+            alert(`Der Batch wurde teilweise verarbeitet.\n\n${details}`)
+        })
+        return () => {
+            off()
+            offSummary()
+        }
     }, [requestQueue])
 
     useEffect(() => {

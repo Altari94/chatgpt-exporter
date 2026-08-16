@@ -1,5 +1,5 @@
 import EventEmitter from 'mitt'
-import { RateLimitError } from '../api'
+import { RateLimitError } from '../core/rate-limit'
 import { sleep } from './utils'
 
 type RequestFn<T> = () => Promise<T>
@@ -8,6 +8,21 @@ type RequestFn<T> = () => Promise<T>
 interface RequestObject<T> {
     name: string
     request: RequestFn<T>
+}
+
+export interface RequestFailure {
+    name: string
+    attempts: number
+    error: string
+}
+
+export interface QueueSummary<T> {
+    total: number
+    completed: number
+    succeeded: T[]
+    failed: RequestFailure[]
+    pending: string[]
+    stopped: boolean
 }
 
 /** Internal shape with per-item retry counters */
@@ -25,6 +40,8 @@ interface ProgressEvent {
     currentStatus: RequestStatus
     /** Seconds remaining in a rate-limit pause (only set when status === 'rate_limited') */
     rateLimitWaitSecs?: number
+    succeeded: number
+    failed: number
 }
 
 /** Max retries for generic (non-429) errors before skipping a single request */
@@ -44,10 +61,14 @@ export class RequestQueue<T> {
     private eventEmitter = EventEmitter<{
         done: T[]
         progress: ProgressEvent
-    } & Record<string, any[]>>()
+        summary: QueueSummary<T>
+    }>()
 
     private queue: Array<InternalRequestObject<T>> = []
     private results: T[] = []
+    private failures: RequestFailure[] = []
+    private summaryEmitted = false
+    private activeRequest: InternalRequestObject<T> | null = null
 
     private status: 'IDLE' | 'IN_PROGRESS' | 'STOPPED' | 'COMPLETED' = 'IDLE'
 
@@ -77,18 +98,23 @@ export class RequestQueue<T> {
     start() {
         if (this.status === 'IDLE') {
             this.total = this.queue.length
+            this.summaryEmitted = false
             this.process()
         }
     }
 
     stop() {
+        if (this.status === 'STOPPED' || this.status === 'COMPLETED') return
         this.status = 'STOPPED'
-        this.eventEmitter.emit('done', this.results)
+        this.finish()
     }
 
     clear() {
         this.queue = []
         this.results = []
+        this.failures = []
+        this.summaryEmitted = false
+        this.activeRequest = null
         this.status = 'IDLE'
         this.backoff = this.minBackoff
         this.pauseUntil = 0
@@ -99,9 +125,10 @@ export class RequestQueue<T> {
 
     on(event: 'progress', fn: (progress: ProgressEvent) => void): () => void
     on(event: 'done', fn: (result: T[]) => void): () => void
-    on(event: string, fn: (...args: any[]) => void): () => void {
-        this.eventEmitter.on(event, fn)
-        return () => this.eventEmitter.off(event, fn)
+    on(event: 'summary', fn: (summary: QueueSummary<T>) => void): () => void
+    on(event: 'progress' | 'done' | 'summary', fn: (value: never) => void): () => void {
+        this.eventEmitter.on(event, fn as never)
+        return () => this.eventEmitter.off(event, fn as never)
     }
 
     private async process() {
@@ -110,7 +137,7 @@ export class RequestQueue<T> {
         }
 
         if (this.queue.length === 0) {
-            this.done()
+            this.finish()
             return
         }
 
@@ -129,6 +156,7 @@ export class RequestQueue<T> {
 
         this.status = 'IN_PROGRESS'
         const requestObject = this.queue.shift()!
+        this.activeRequest = requestObject
         const { name, request } = requestObject
 
         let waitMs = this.backoff
@@ -136,6 +164,7 @@ export class RequestQueue<T> {
         try {
             this.progress(name, 'processing')
             const result = await request()
+            if (this.isStopped()) return
             this.results.push(result)
             this.completed++
             this.progress(name, 'processing')
@@ -143,11 +172,14 @@ export class RequestQueue<T> {
             requestObject.retries = 0
         }
         catch (error) {
+            if (this.isStopped()) return
             if (error instanceof RateLimitError) {
                 this.globalPauses++
                 if (this.globalPauses > MAX_GLOBAL_PAUSES) {
                     // Rate limit persists even after several long pauses — abort.
                     console.warn('[Exporter] Queue stopped: API rate limit did not clear after', MAX_GLOBAL_PAUSES, 'pauses')
+                    this.recordFailure(requestObject, error)
+                    this.activeRequest = null
                     this.stop()
                     return
                 }
@@ -162,13 +194,17 @@ export class RequestQueue<T> {
                 console.warn(`[Exporter] Rate limited (429). Pausing queue for ${Math.round(pauseMs / 1000)}s (pause #${this.globalPauses})`)
                 // Put this item back — it will be retried after the pause clears
                 this.queue.unshift(requestObject)
+                this.activeRequest = null
                 waitMs = 0 // the sleep is handled at the top of the next process() call
             }
             else {
                 console.error(`[Exporter] "${name}" failed:`, error)
                 requestObject.retries++
-                if (requestObject.retries > MAX_RETRIES) {
-                    console.warn(`[Exporter] "${name}" skipped after ${MAX_RETRIES} retries`)
+                if (!isRetryableError(error) || requestObject.retries > MAX_RETRIES) {
+                    console.warn(`[Exporter] "${name}" marked as failed after ${requestObject.retries} attempt(s)`)
+                    this.recordFailure(requestObject, error)
+                    this.activeRequest = null
+                    this.completed++
                     waitMs = 0 // skip — don't re-queue
                 }
                 else {
@@ -176,9 +212,13 @@ export class RequestQueue<T> {
                     waitMs = this.backoff
                     this.progress(name, 'retrying')
                     this.queue.unshift(requestObject)
+                    this.activeRequest = null
                 }
             }
         }
+
+        if (this.isStopped()) return
+        this.activeRequest = null
 
         await sleep(waitMs)
         this.process()
@@ -191,11 +231,45 @@ export class RequestQueue<T> {
             currentName: name,
             currentStatus: status,
             rateLimitWaitSecs,
+            succeeded: this.results.length,
+            failed: this.failures.length,
         })
     }
 
-    private done() {
+    private recordFailure(requestObject: InternalRequestObject<T>, error: unknown) {
+        this.failures.push({
+            name: requestObject.name,
+            attempts: Math.max(1, requestObject.retries),
+            error: error instanceof Error ? error.message : String(error),
+        })
+    }
+
+    private isStopped() {
+        return this.status === 'STOPPED'
+    }
+
+    private finish() {
+        if (this.summaryEmitted) return
+        this.summaryEmitted = true
+        const stopped = this.status === 'STOPPED'
         this.status = 'COMPLETED'
         this.eventEmitter.emit('done', this.results)
+        this.eventEmitter.emit('summary', {
+            total: this.total,
+            completed: this.completed,
+            succeeded: [...this.results],
+            failed: [...this.failures],
+            pending: [
+                ...(this.activeRequest ? [this.activeRequest.name] : []),
+                ...this.queue.map(request => request.name),
+            ],
+            stopped,
+        })
     }
+}
+
+function isRetryableError(error: unknown): boolean {
+    if (error instanceof TypeError) return true
+    if (!(error instanceof Error)) return false
+    return /network|timeout|temporar|unavailable|server|5\d\d/i.test(error.message)
 }

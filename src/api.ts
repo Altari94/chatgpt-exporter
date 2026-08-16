@@ -1,8 +1,11 @@
 import urlcat from 'urlcat'
 import { apiUrl, baseUrl } from './constants'
+import { RateLimitError } from './core/rate-limit'
 import { getChatIdFromUrl, getConversationFromSharePage, isSharePage } from './page'
 import { blobToDataURL } from './utils/dom'
 import { memorize } from './utils/memorize'
+
+export { RateLimitError } from './core/rate-limit'
 
 interface ApiSession {
     accessToken: string
@@ -684,18 +687,6 @@ export async function deleteConversation(chatId: string): Promise<boolean> {
  * Thrown when the API responds with 429 Too Many Requests.
  * Carries the wait time from the `Retry-After` header (or a safe default).
  */
-export class RateLimitError extends Error {
-    /** Milliseconds to wait before retrying */
-    readonly retryAfterMs: number
-    constructor(retryAfterHeader: string | null) {
-        super('Too Many Requests (429)')
-        this.name = 'RateLimitError'
-        const secs = retryAfterHeader != null ? Number.parseInt(retryAfterHeader, 10) : Number.NaN
-        // Default to 30 s if the header is missing or unparseable
-        this.retryAfterMs = Number.isFinite(secs) && secs > 0 ? secs * 1000 : 30_000
-    }
-}
-
 /** Header names ChatGPT might use for rate-limit signalling */
 const RATE_LIMIT_HEADERS = [
     'retry-after',

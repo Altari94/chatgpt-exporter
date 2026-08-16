@@ -21,6 +21,10 @@ corepack pnpm dev
 corepack pnpm test
 corepack pnpm lint
 corepack pnpm build
+corepack pnpm build:extension
+corepack pnpm test:core
+corepack pnpm test:extension
+corepack pnpm release:build
 ```
 
 ## Geplanter Entwicklungsrahmen

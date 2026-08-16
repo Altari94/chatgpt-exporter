@@ -12,6 +12,7 @@ node_modules
 .turbo
 .tmp
 dist-extension
+dist-release
 
 # Editor directories and files
 .idea

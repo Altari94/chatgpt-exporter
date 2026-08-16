@@ -216,7 +216,7 @@ Damit ist die offene Community-Schnittstelle fertig.
 
 ### Backlog
 
-- Batch-Export-Problem aus Issue #366 reproduzieren und beheben oder ausschließen.
+- Batch-Export-Probleme aus den tatsächlich relevanten Upstream-Issues reproduzieren oder ausschließen.
 - Erfolgs- und Fehlerzähler trennen.
 - Rate-Limit-Verhalten und Retry-Grenzen dokumentieren.
 - Export aller Projekte prüfen, ohne vorhandene Funktionen zu duplizieren.
@@ -244,10 +244,14 @@ Damit ist die offene Community-Schnittstelle fertig.
 ### Backlog
 
 - README für Chrome-Installation, Berechtigungen und Raw-Download aktualisieren.
+- Chrome Extension als einzigen empfohlenen Nutzerweg positionieren.
+- Userscript als Legacy-Kompatibilitätsartefakt dokumentieren, nicht als gleichwertige Produktwahl.
 - Userscript- und Extension-Builds dokumentieren.
+- reproduzierbares Release-Artefakt mit Extension und Legacy-Artefakt erzeugen.
 - Changelog und Release-Checkliste ergänzen.
 - Sicherheits- und Datenschutzprüfung durchführen.
 - Lizenz, Herkunft und Upstream-Abweichungen dokumentieren.
+- ChatGPT-Adaptergrenzen, unterstützte URL-Typen und Reaktionsstrategie auf Web-App-Änderungen dokumentieren.
 
 ### Akzeptanz-Gate
 
@@ -256,6 +260,7 @@ Damit ist die offene Community-Schnittstelle fertig.
 - Keine privaten Daten, Zugangsdaten oder lokalen Pfade sind enthalten.
 - Lizenz und Herkunft des Forks bleiben sichtbar.
 - Release-Artefakte sind reproduzierbar.
+- Neue Nutzer müssen nicht zwischen Userscript und Chrome Extension wählen.
 
 ### Abschluss
 

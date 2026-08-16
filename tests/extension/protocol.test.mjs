@@ -34,6 +34,7 @@ test('build output has narrow MV3 permissions', async () => {
     const manifest = JSON.parse(await readFile('dist-extension/manifest.json', 'utf8'))
 
     assert.equal(manifest.manifest_version, 3)
+    assert.equal(manifest.version, '0.8.0')
     assert.deepEqual(manifest.host_permissions, [
         'https://chatgpt.com/*',
         'https://chat.openai.com/*',

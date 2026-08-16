@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.8.0 – Chrome-first Open-Source-Release
+
+### Added
+
+- Chrome Extension als empfohlener Installations- und Nutzungsweg
+- reproduzierbarer Extension-Release-Build
+- Dokumentation für Berechtigungen, Datenschutz, Payload und Fork-Herkunft
+- Legacy-Userscript-Artefakt für bestehende Installationen
+
+### Changed
+
+- README und Installationsanleitung sind nicht mehr auf Tampermonkey ausgerichtet.
+- Extension-Version auf `0.8.0` angehoben.
+
+### Release boundary
+
+Die Extension unterstützt primär normale ChatGPT-Unterhaltungen unter `/c/{id}`. Der Adapter verwendet private ChatGPT-Web-App-Endpoints; Änderungen an ChatGPT können daher Anpassungen erfordern.
+
 ## [2.32.3](https://github.com/pionxzh/chatgpt-exporter/compare/userscript-v2.32.2...userscript-v2.32.3) (2026-07-05)
 
 

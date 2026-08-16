@@ -24,6 +24,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:extension": "node scripts/build-extension.mjs",
+    "release:build": "node scripts/build-release.mjs",
     "test": "tsc --noEmit",
     "test:core": "node scripts/run-core-tests.mjs",
     "test:extension": "node scripts/run-extension-tests.mjs",

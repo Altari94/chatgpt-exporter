@@ -2,7 +2,93 @@
 
 <div align="center">
 
-## Export raw ChatGPT conversations with one click
+## Export complete ChatGPT conversations with one click
+
+</div>
+
+ChatGPT Exporter is a **Chrome-first, local-first** exporter for ChatGPT conversations. It creates complete, portable chat packages that retain original data while adding a readable transcript and locally stored media — without Tampermonkey or another userscript manager.
+
+<p align="center">
+  <a href="./LICENSE">MIT License</a> ·
+  <a href="./SECURITY.md">Security</a> ·
+  <a href="./SUPPORT.md">Support</a> ·
+  <a href="./README.de.md">Deutsch</a> ·
+  <a href="./README.es.md">Español</a>
+</p>
+
+## Why this project exists
+
+The upstream project, [pionxzh/chatgpt-exporter](https://github.com/pionxzh/chatgpt-exporter), established a capable browser-userscript exporter. This independent MIT-licensed fork takes a different product path:
+
+- **Chrome Extension first:** the supported install path is a native Manifest V3 extension.
+- **Portable packages first:** one primary action downloads a complete local folder, not scattered files.
+- **Raw data first:** the untouched API response remains the canonical source; Markdown and media metadata are documented companions.
+- **Explicit boundaries:** network transmission, optional host access and downloads only occur after a user action.
+
+It deliberately does not seek feature-for-feature parity with the upstream userscript. Instead, it focuses on a stable, understandable capture pipeline for local archives and further processing.
+
+## Features
+
+- Download the current chat as a complete package: original JSON, Markdown transcript, media manifest and available local assets.
+- Export individual chats as Raw JSON, Text, Markdown or HTML; copy text to the clipboard.
+- Export selected chats or all chats, with search, select-all and cancellation between conversations.
+- Keep images addressable from the Markdown through relative local paths.
+- Optionally send the current raw payload to a user-configured HTTP endpoint; no endpoint is contacted automatically.
+- Use the popup in English, German or Spanish.
+
+## Package contract
+
+<pre>
+Downloads/ChatGPT Exporter/{created}__{title-slug}__{id8}/
+├── conversation.json  # unmodified API response; canonical source
+├── conversation.md    # readable transcript with relative image links
+├── media.json         # source URL, local filename, download status and errors
+└── assets/            # downloaded media files
+</pre>
+
+The stable names make packages easy to index by date, title and a short conversation identifier. Consumers should treat <code>conversation.json</code> as the source of record; <code>conversation.md</code> and <code>media.json</code> are derived, documented views.
+
+## Install
+
+1. Download and unzip the latest release artifact.
+2. Open <code>chrome://extensions</code>.
+3. Enable **Developer mode**.
+4. Choose **Load unpacked** and select the extracted <code>extension</code> directory.
+5. Open a normal chat at <code>chatgpt.com/c/…</code>, pin ChatGPT Exporter, and select **Download chat package**.
+
+Complete guides: [English](./docs/INSTALLATION.md) · [Deutsch](./docs/INSTALLATION.de.md) · [Español](./docs/INSTALLATION.es.md).
+
+## Privacy and permissions
+
+The extension reads the active ChatGPT conversation only when you invoke an export. A complete package remains on your computer. Media is downloaded only into that package. The optional HTTP destination requires an explicit saved endpoint and an explicit send action; Chrome requests host access only for that endpoint.
+
+Read [Security and privacy](./docs/SECURITY_AND_PRIVACY.md), [optional host permissions](./docs/releases/V0.6.1_OPTIONAL_HOST_PERMISSIONS.md), and [Security policy](./SECURITY.md) before using an HTTP destination.
+
+## Development
+
+<pre>
+corepack pnpm install --frozen-lockfile
+corepack pnpm lint
+corepack pnpm test
+corepack pnpm test:core
+corepack pnpm test:extension
+corepack pnpm release:build
+</pre>
+
+The release build creates a reproducible unpacked extension and ZIP in <code>dist-release/</code>. Start with the [Developer Guide](./docs/DEVELOPER_GUIDE.en.md), [Extension Build](./docs/EXTENSION_BUILD.md), and [Release Checklist](./docs/RELEASE_CHECKLIST.md).
+
+## Fork, attribution and contribution
+
+This repository is maintained as an independent fork by Marcel Kröncke. It preserves the MIT license and clear attribution to [pionxzh/chatgpt-exporter](https://github.com/pionxzh/chatgpt-exporter). The original userscript source remains only for compatibility and provenance; it is not the recommended product path and is not shipped in Chrome-extension release artifacts.
+
+Contributions are welcome under the MIT license. Read [CONTRIBUTING.md](./CONTRIBUTING.md), [Fork Maintenance](./docs/FORK_MAINTENANCE.md), [Project Intent](./docs/PROJECT_INTENT.md), and the [Upstream Comparison](./docs/UPSTREAM_VS_FORK.md) before proposing substantial changes.
+
+## Support
+
+File reproducible bugs and feature requests through GitHub Issues. For a security concern, follow [SECURITY.md](./SECURITY.md). For usage questions and known scope boundaries, see [SUPPORT.md](./SUPPORT.md).
+
+<!-- Historical upstream README content retained in Git history for provenance.
+It is intentionally hidden from this project's landing page.
 
 [![license][license-image]][license-url]
 [![release][release-image]][release-url]

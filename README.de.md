@@ -2,6 +2,10 @@
 
 Die Chrome-Extension ist der empfohlene Weg dieses Forks. Sie benötigt kein Tampermonkey.
 
+## Projekt
+
+Dieser eigenständige MIT-Fork von [pionxzh/chatgpt-exporter](https://github.com/pionxzh/chatgpt-exporter) konzentriert sich auf eine native Chrome-Extension und portable Chat-Pakete. Der Original-JSON-Export bleibt unverändert erhalten; Markdown, Medienmanifest und lokale Bilder machen die Rohdaten lesbar und weiterverwendbar. Der frühere Userscript-Weg ist nicht der empfohlene Nutzerpfad und wird nicht in Chrome-Release-Artefakten ausgeliefert.
+
 ## Installation
 
 ```bash
@@ -23,4 +27,4 @@ Danach `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dist-e
 
 PNG-Screenshots und ZIP-Batch-Export gehören bewusst nicht zum Chrome-Produkt. Tampermonkey ist für neue Nutzer nicht erforderlich.
 
-Weitere Details: [Extension-Build](./docs/EXTENSION_BUILD.md), [Changelog](./CHANGELOG.md), [Sicherheitsprüfung](./docs/SECURITY_AND_PRIVACY.md), [Branding](./docs/BRANDING.md).
+Weitere Details: [Installation](./docs/INSTALLATION.de.md), [Extension-Build](./docs/EXTENSION_BUILD.md), [Changelog](./CHANGELOG.md), [Sicherheitsprüfung](./docs/SECURITY_AND_PRIVACY.md), [Projektidee](./docs/PROJECT_INTENT.md), [Fork-Vergleich](./docs/UPSTREAM_VS_FORK.md) und [Branding](./docs/BRANDING.md).

@@ -89,6 +89,10 @@ The build reads its version from `package.json` and produces `dist-release/chatg
 
 This is an independent MIT-licensed fork of [pionxzh/chatgpt-exporter](https://github.com/pionxzh/chatgpt-exporter). Its Chrome-first, raw-first product line is intentionally not a complete feature-for-feature replacement of the upstream userscript. See [Upstream comparison](./docs/UPSTREAM_VS_FORK.md) and [Fork maintenance](./docs/FORK_MAINTENANCE.md).
 
+<!-- Historical upstream README content retained in the Git history for provenance.
+It is intentionally hidden from the project landing page: this fork's public
+product and documentation are the Chrome Extension sections above.
+
 ## Legacy userscript reference
 
 The remaining sections below document formats and capabilities inherited from the upstream userscript. They are retained for provenance and existing userscript users; the installation and feature contract for this fork is defined by the Chrome Extension sections above.
@@ -98,8 +102,6 @@ The remaining sections below document formats and capabilities inherited from th
 [📚 Supported Formats](#-supported-formats) &nbsp;&nbsp;|&nbsp;&nbsp; [💡 Example](#-example) &nbsp;&nbsp;|&nbsp;&nbsp; [📤 Export Multiple Conversations](#-export-multiple-conversations) &nbsp;&nbsp;|&nbsp;&nbsp; [🤝 Contribution](#-contribution) &nbsp;&nbsp;|&nbsp;&nbsp; [⭐ Star History](#-star-history)
 
 </div>
-
-#
 
 ## 📚 Supported Formats
 
@@ -309,3 +311,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md)
 <img src="https://star-history.dera.page/svg?repos=pionxzh/chatgpt-exporter&type=Date" width="600" height="400" alt="Star History Chart" valign="middle">
 
 </div>
+-->

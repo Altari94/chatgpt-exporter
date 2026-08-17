@@ -15,7 +15,11 @@ declare namespace chrome {
     }
 
     namespace permissions {
-        function request(permissions: { origins: string[] }): Promise<boolean>
+        function request(permissions: { origins?: string[]; permissions?: string[] }): Promise<boolean>
+    }
+
+    namespace downloads {
+        function download(options: { url: string; filename: string; saveAs?: boolean; conflictAction?: 'uniquify' | 'overwrite' | 'prompt' }): Promise<number>
     }
 
     namespace tabs {

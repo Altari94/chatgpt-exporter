@@ -2,7 +2,7 @@
 
 ## Warum dieser Fork existiert
 
-Der Fork entstand aus einem konkreten persönlichen Bedarf: ChatGPT-Unterhaltungen sollen als möglichst originales Rohmaterial für einen Second-Brain- und Analyseworkflow gesichert werden. Die bestehende Userscript-Lösung lieferte die wichtige Vorarbeit und bleibt deshalb sichtbar als Upstream-Grundlage und Legacy-Artefakt.
+Der Fork entstand aus einem konkreten persönlichen Bedarf: ChatGPT-Unterhaltungen sollen als möglichst originales Rohmaterial für lokale Archive, Analysen und eigene Verarbeitungssysteme gesichert werden. Die bestehende Userscript-Lösung lieferte die wichtige Vorarbeit und bleibt deshalb sichtbar als Upstream-Grundlage und Legacy-Artefakt.
 
 Die Weiterentwicklung verfolgt drei Leitideen:
 
@@ -12,7 +12,7 @@ Die Weiterentwicklung verfolgt drei Leitideen:
 
 ## Produktentscheidungen
 
-Die Fork-Version ist bewusst kleiner als Upstream. PNG-Screenshots und ZIP-Batch-Export wurden nicht portiert, weil sie für den Rohdatenworkflow keinen zentralen Nutzen haben und stärker von DOM-/Browserdetails abhängen. Export All bleibt erhalten, lädt aber einzelne Raw-JSON-Dateien mit Auswahl und Abbruch.
+Die Fork-Version ist bewusst kleiner als Upstream. PNG-Screenshots und ZIP-Batch-Export wurden nicht portiert, weil sie für den paketbasierten Rohdatenexport keinen zentralen Nutzen haben und stärker von DOM-/Browserdetails abhängen. Export All bleibt erhalten, lädt aber vollständige Chat-Pakete mit Auswahl und Abbruch.
 
 ## Persönlicher Maintainer-Fokus
 

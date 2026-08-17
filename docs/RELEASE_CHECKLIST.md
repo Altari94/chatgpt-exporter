@@ -23,6 +23,8 @@
 
 - [ ] `dist-release/.../extension` als entpackte Chrome-Extension geladen
 - [ ] Normaler Chat als Raw-JSON heruntergeladen
+- [x] Chat mit Bild als vollständiges Paket aus Raw-JSON, Markdown, Bilddatei und `media.json`-Zuordnung geprüft
+- [ ] Nicht erreichbares Bild wird als `failed` dokumentiert, ohne den JSON-Export abzubrechen
 - [ ] Fehlende/ungültige Unterhaltung zeigt verständlichen Fehler
 - [ ] Endpoint-Berechtigung erscheint erst bei HTTP-Nutzung
 - [ ] Endpoint-Test und expliziter Versand geprüft

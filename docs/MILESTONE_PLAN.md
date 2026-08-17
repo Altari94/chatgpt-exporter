@@ -4,7 +4,7 @@
 
 Eine stabile Chrome Extension erfasst eine ChatGPT-Unterhaltung originalgetreu und lädt sie mit einer Nutzeraktion als Rohmaterial herunter. Der Capture-Kern bleibt unabhängig von der persönlichen Second-Brain-Architektur und bietet generische Exportziele.
 
-Das Second Brain ist kein Bestandteil dieses Repositories, sondern ein späterer Verbraucher der Capture-Schnittstelle.
+Persönliche Wissenssysteme sind kein Bestandteil dieses Repositories, sondern mögliche Verbraucher der Capture-Schnittstelle.
 
 ## Versionierungsregeln
 

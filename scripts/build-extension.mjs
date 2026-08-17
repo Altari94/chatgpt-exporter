@@ -48,6 +48,30 @@ await build({
     platform: 'browser',
     target: 'chrome120',
 })
+await build({
+    entryPoints: [path.join(root, 'extension/src/media-assets.ts')],
+    bundle: true,
+    format: 'esm',
+    outfile: path.join(output, 'media-assets.js'),
+    platform: 'browser',
+    target: 'chrome120',
+})
+await build({
+    entryPoints: [path.join(root, 'extension/src/archive-naming.ts')],
+    bundle: true,
+    format: 'esm',
+    outfile: path.join(output, 'archive-naming.js'),
+    platform: 'browser',
+    target: 'chrome120',
+})
+await build({
+    entryPoints: [path.join(root, 'extension/src/derived-export.ts')],
+    bundle: true,
+    format: 'esm',
+    outfile: path.join(output, 'derived-export.js'),
+    platform: 'browser',
+    target: 'chrome120',
+})
 await cp(path.join(source, 'manifest.json'), path.join(output, 'manifest.json'))
 await cp(path.join(source, 'popup.html'), path.join(output, 'popup.html'))
 await cp(path.join(source, 'icons'), path.join(output, 'icons'), { recursive: true })

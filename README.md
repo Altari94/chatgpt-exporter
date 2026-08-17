@@ -45,8 +45,10 @@ Then load `dist-extension/` through **Load unpacked**.
 
 1. Open a normal ChatGPT conversation at `chatgpt.com/c/...`.
 2. Open the ChatGPT Exporter popup.
-3. Click **Raw JSON herunterladen**.
-4. The downloaded JSON preserves the original response text and parsed raw value.
+3. Click **Download chat package**.
+4. The package contains unchanged raw JSON, detailed Markdown, a media manifest and local assets.
+
+Use **Raw JSON** in the single-chat formats section when only the original JSON file is needed.
 
 To export multiple chats, choose **Export All**, load the chat list, select individual chats or all chats, and start the download. The operation can be cancelled between conversations.
 

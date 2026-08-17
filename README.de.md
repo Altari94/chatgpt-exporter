@@ -14,6 +14,7 @@ Danach `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dist-e
 ## Funktionen
 
 - Raw JSON als verlustfreier Primärexport
+- Chat-Paket mit Raw JSON, Markdown, Medienmanifest und lokalen Bildern
 - Text-, Markdown- und HTML-Export für den aktuellen Chat
 - Kopieren in die Zwischenablage
 - Export All mit Chatliste, Einzel-/Gesamtauswahl und Abbruch

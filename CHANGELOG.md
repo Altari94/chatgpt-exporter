@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.10.0 – Portable chat packages with local media
+
+### Added
+
+- complete chat packages containing original JSON, Markdown, a media manifest and local image assets
+- stable package naming: `{created}__{title-slug}__{id8}`
+- Markdown frontmatter and relative local image links for portable downstream use
+- optional Chrome download permission requested only when package storage is used
+
+### Fixed
+
+- preserve the original JSON and Markdown as separate files with their correct MIME types
+- retain media-download failures in `media.json` without discarding the remaining package
+
+### Scope boundary
+
+The package preserves the original ChatGPT response as `conversation.json`.
+Markdown and the media manifest are derived, documented companions; no external
+upload or automatic content analysis is performed.
+
 ## v0.9.0 – Chrome-first export UI and derived single-chat formats
 
 ### Added

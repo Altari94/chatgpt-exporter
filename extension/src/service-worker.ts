@@ -2,6 +2,12 @@ import { type CaptureEnvelope, sendEnvelope, testEndpoint } from './http-destina
 import type { RuntimeCaptureTestRequest, RuntimeCaptureTestResponse } from './protocol'
 
 chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
+    if (isDownloadFileRequest(message)) {
+        chrome.downloads.download({ url: message.dataUrl, filename: message.filename, saveAs: false, conflictAction: 'overwrite' })
+            .then(downloadId => sendResponse({ ok: true, downloadId }))
+            .catch((error: unknown) => sendResponse({ ok: false, errorMessage: error instanceof Error ? error.message : 'Datei konnte nicht gespeichert werden.' }))
+        return true
+    }
     if (isSendCaptureRequest(message)) {
         sendConfiguredEnvelope(message.envelope)
             .then(sendResponse)
@@ -30,6 +36,14 @@ async function sendConfiguredEnvelope(envelope: CaptureEnvelope) {
     const endpoint = typeof settings.httpEndpoint === 'string' ? settings.httpEndpoint : ''
     if (!endpoint) throw new Error('Bitte zuerst einen HTTP-Endpoint konfigurieren.')
     return sendEnvelope(endpoint, envelope)
+}
+
+function isDownloadFileRequest(value: unknown): value is { type: 'DOWNLOAD_FILE'; filename: string; dataUrl: string } {
+    return typeof value === 'object' && value !== null
+        && 'type' in value && value.type === 'DOWNLOAD_FILE'
+        && 'filename' in value && typeof value.filename === 'string'
+        && 'dataUrl' in value && typeof value.dataUrl === 'string'
+        && value.dataUrl.startsWith('data:')
 }
 
 async function testConfiguredEndpoint() {

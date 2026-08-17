@@ -5,6 +5,11 @@ export interface RawConversationResponse {
     value: Record<string, unknown>
 }
 
+export interface MediaDownloadResponse {
+    blob: Blob
+    mimeType: string
+}
+
 export interface ConversationListItem {
     id: string
     title?: string
@@ -154,6 +159,42 @@ export async function fetchConversationById(
     }
     catch { throw new CaptureError('INVALID_RESPONSE', 'ChatGPT lieferte kein gültiges JSON.') }
     return { conversationId, url, text, value }
+}
+
+/** Resolves ChatGPT's sediment file pointer and downloads the binary asset. */
+export async function fetchMediaAsset(
+    pointer: string,
+    pageUrl: string = window.location.href,
+    fetchImpl: typeof fetch = fetch,
+): Promise<MediaDownloadResponse> {
+    const origin = new URL(pageUrl).origin
+    if (pointer.startsWith('sediment://')) {
+        const accessToken = await fetchAccessToken(origin, fetchImpl)
+        const fileId = pointer.slice('sediment://'.length)
+        const detailsResponse = await fetchImpl(`${origin}/backend-api/files/download/${encodeURIComponent(fileId)}?post_id=&inline=false`, {
+            credentials: 'include',
+            headers: { 'accept': 'application/json', 'Authorization': `Bearer ${accessToken}`, 'X-Authorization': `Bearer ${accessToken}` },
+        })
+        if (!detailsResponse.ok) throw new CaptureError('NETWORK_ERROR', `Das Bild konnte nicht aufgelöst werden (HTTP ${detailsResponse.status}).`)
+        const details: unknown = await detailsResponse.json()
+        if (!isRecord(details) || typeof details.download_url !== 'string') throw new CaptureError('INVALID_RESPONSE', 'ChatGPT lieferte keine Download-Adresse für das Bild.')
+        return fetchMediaUrl(details.download_url, fetchImpl)
+    }
+    if (/^https?:\/\//i.test(pointer)) return fetchMediaUrl(pointer, fetchImpl)
+    throw new CaptureError('INVALID_RESPONSE', 'Nicht unterstützte Bildreferenz.')
+}
+
+async function fetchMediaUrl(url: string, fetchImpl: typeof fetch): Promise<MediaDownloadResponse> {
+    let response: Response
+    try {
+        response = await fetchImpl(url, { credentials: 'include' })
+    }
+    catch {
+        throw new CaptureError('NETWORK_ERROR', 'Das Bild konnte nicht heruntergeladen werden.')
+    }
+    if (!response.ok) throw new CaptureError('NETWORK_ERROR', `Das Bild konnte nicht heruntergeladen werden (HTTP ${response.status}).`)
+    const blob = await response.blob()
+    return { blob, mimeType: response.headers.get('content-type') || blob.type || 'application/octet-stream' }
 }
 
 async function fetchAccessToken(origin: string, fetchImpl: typeof fetch): Promise<string> {

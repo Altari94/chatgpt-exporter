@@ -20,13 +20,13 @@ const selectedChatIds = new Set<string>()
 /* eslint-disable pionxzh/consistent-list-newline */
 const translations: Record<string, Record<string, string>> = {
     de: {
-        appTitle: 'ChatGPT Exporter', rawEyebrow: 'Rohdaten · empfohlen', rawTitle: 'Aktuellen Chat sichern', rawHint: 'Originales ChatGPT-JSON für Archiv, Analyse und Second Brain.', rawDownload: '↓ Raw JSON herunterladen', formatsEyebrow: 'Weitere Formate', formatsTitle: 'Einzelchat exportieren', formatsHint: 'Abgeleitete Kopien für Lesen, Teilen oder Weiterverarbeitung.', clipboard: 'Text in Zwischenablage', multipleEyebrow: 'Mehrere Chats', multipleTitle: 'Export All', multipleHint: 'Wähle einzelne Chats oder alle aus. Jeder Download bleibt eine originale Raw-JSON-Datei.', chooseChats: 'Chats auswählen', searchChats: 'Chats suchen …', selectAll: 'Alle auswählen', clearAll: 'Auswahl leeren', selectedCount: 'Ausgewählt: {count}', downloadSelection: 'Auswahl herunterladen', cancel: 'Abbrechen', httpTitle: 'HTTP-Destination', endpoint: 'Endpoint', save: 'Speichern', test: 'Testen', sendCurrent: 'Aktuellen Chat senden', connection: 'Verbindung testen',
+        appTitle: 'ChatGPT Exporter', rawEyebrow: 'Chat-Paket · empfohlen', rawTitle: 'Aktuellen Chat sichern', rawHint: 'JSON, Markdown und Bilder für Archiv, Analyse und eigene Workflows.', rawDownload: '↓ Chat-Paket herunterladen', formatsEyebrow: 'Weitere Formate', formatsTitle: 'Einzelchat exportieren', formatsHint: 'Einzelne Formate für Lesen, Teilen oder technische Weiterverarbeitung.', rawJson: 'Raw JSON ↓', clipboard: 'Text in Zwischenablage', multipleEyebrow: 'Mehrere Chats', multipleTitle: 'Export All', multipleHint: 'Wähle einzelne Chats oder alle aus. Jeder Download bleibt ein vollständiges Chat-Paket.', chooseChats: 'Chats auswählen', searchChats: 'Chats suchen …', selectAll: 'Alle auswählen', clearAll: 'Auswahl leeren', selectedCount: 'Ausgewählt: {count}', downloadSelection: 'Auswahl herunterladen', cancel: 'Abbrechen', httpTitle: 'HTTP-Destination', endpoint: 'Endpoint', save: 'Speichern', test: 'Testen', sendCurrent: 'Aktuellen Chat senden', connection: 'Verbindung testen', mediaSummary: '{count} Bilder gesichert, {failed} fehlgeschlagen.',
     },
     en: {
-        appTitle: 'ChatGPT Exporter', rawEyebrow: 'Raw data · recommended', rawTitle: 'Save current chat', rawHint: 'Original ChatGPT JSON for archive, analysis and Second Brain.', rawDownload: '↓ Download raw JSON', formatsEyebrow: 'More formats', formatsTitle: 'Export single chat', formatsHint: 'Derived copies for reading, sharing or processing.', clipboard: 'Copy text to clipboard', multipleEyebrow: 'Multiple chats', multipleTitle: 'Export All', multipleHint: 'Select individual chats or all of them. Each download remains an original raw JSON file.', chooseChats: 'Choose chats', searchChats: 'Search chats …', selectAll: 'Select all', clearAll: 'Clear selection', selectedCount: 'Selected: {count}', downloadSelection: 'Download selection', cancel: 'Cancel', httpTitle: 'HTTP destination', endpoint: 'Endpoint', save: 'Save', test: 'Test', sendCurrent: 'Send current chat', connection: 'Test connection',
+        appTitle: 'ChatGPT Exporter', rawEyebrow: 'Chat package · recommended', rawTitle: 'Save current chat', rawHint: 'JSON, Markdown and images for archiving, analysis and custom workflows.', rawDownload: '↓ Download chat package', formatsEyebrow: 'More formats', formatsTitle: 'Export single chat', formatsHint: 'Individual formats for reading, sharing or technical processing.', rawJson: 'Raw JSON ↓', clipboard: 'Copy text to clipboard', multipleEyebrow: 'Multiple chats', multipleTitle: 'Export All', multipleHint: 'Select individual chats or all of them. Each download remains a complete chat package.', chooseChats: 'Choose chats', searchChats: 'Search chats …', selectAll: 'Select all', clearAll: 'Clear selection', selectedCount: 'Selected: {count}', downloadSelection: 'Download selection', cancel: 'Cancel', httpTitle: 'HTTP destination', endpoint: 'Endpoint', save: 'Save', test: 'Test', sendCurrent: 'Send current chat', connection: 'Test connection', mediaSummary: '{count} images saved, {failed} failed.',
     },
     es: {
-        appTitle: 'ChatGPT Exporter', rawEyebrow: 'Datos sin procesar · recomendado', rawTitle: 'Guardar chat actual', rawHint: 'JSON original de ChatGPT para archivo, análisis y Second Brain.', rawDownload: '↓ Descargar JSON original', formatsEyebrow: 'Más formatos', formatsTitle: 'Exportar un chat', formatsHint: 'Copias derivadas para leer, compartir o procesar.', clipboard: 'Copiar texto al portapapeles', multipleEyebrow: 'Varios chats', multipleTitle: 'Exportar todo', multipleHint: 'Selecciona chats individuales o todos. Cada descarga conserva el JSON original.', chooseChats: 'Elegir chats', searchChats: 'Buscar chats …', selectAll: 'Seleccionar todo', clearAll: 'Borrar selección', selectedCount: 'Seleccionados: {count}', downloadSelection: 'Descargar selección', cancel: 'Cancelar', httpTitle: 'Destino HTTP', endpoint: 'Endpoint', save: 'Guardar', test: 'Probar', sendCurrent: 'Enviar chat actual', connection: 'Probar conexión',
+        appTitle: 'ChatGPT Exporter', rawEyebrow: 'Paquete del chat · recomendado', rawTitle: 'Guardar chat actual', rawHint: 'JSON, Markdown e imágenes para archivo, análisis y flujos propios.', rawDownload: '↓ Descargar paquete', formatsEyebrow: 'Más formatos', formatsTitle: 'Exportar un chat', formatsHint: 'Formatos individuales para leer, compartir o procesar.', rawJson: 'JSON original ↓', clipboard: 'Copiar texto al portapapeles', multipleEyebrow: 'Varios chats', multipleTitle: 'Exportar todo', multipleHint: 'Selecciona chats individuales o todos. Cada descarga conserva el paquete completo.', chooseChats: 'Elegir chats', searchChats: 'Buscar chats …', selectAll: 'Seleccionar todo', clearAll: 'Borrar selección', selectedCount: 'Seleccionados: {count}', downloadSelection: 'Descargar selección', cancel: 'Cancelar', httpTitle: 'Destino HTTP', endpoint: 'Endpoint', save: 'Guardar', test: 'Probar', sendCurrent: 'Enviar chat actual', connection: 'Probar conexión', mediaSummary: '{count} imágenes guardadas, {failed} fallidas.',
     },
 }
 /* eslint-enable pionxzh/consistent-list-newline */
@@ -157,11 +157,16 @@ downloadButton?.addEventListener('click', async () => {
     }
 
     try {
+        const useFolder = await requestDownloadPermission()
         const response = await chrome.tabs.sendMessage(tab.id, {
             type: 'DOWNLOAD_CURRENT_CONVERSATION',
-        }) as { ok?: boolean; fileName?: string; errorMessage?: string } | undefined
+            useFolder,
+        }) as { ok?: boolean; fileName?: string; media?: Array<{ status?: string }>; errorMessage?: string } | undefined
+        const downloadedMedia = response?.media?.filter(asset => asset.status === 'downloaded').length ?? 0
+        const failedMedia = response?.media?.filter(asset => asset.status === 'failed').length ?? 0
+        const mediaMessage = (translations[activeLanguage] || translations.en).mediaSummary.replace('{count}', String(downloadedMedia)).replace('{failed}', String(failedMedia))
         setStatus(response?.ok
-            ? `Heruntergeladen: ${response.fileName}`
+            ? `${response.fileName} · ${mediaMessage}`
             : (response?.errorMessage || 'Download fehlgeschlagen.'))
     }
     catch {
@@ -276,11 +281,21 @@ startExportButton?.addEventListener('click', async () => {
     }
     setStatus(`Exportiere ${selectedChatIds.size} Chats …`)
     try {
-        const response = await chrome.tabs.sendMessage(tab.id, { type: 'EXPORT_SELECTED_RAW', ids: [...selectedChatIds] }) as { ok?: boolean; count?: number; cancelled?: boolean; errorMessage?: string } | undefined
+        const useFolder = await requestDownloadPermission()
+        const response = await chrome.tabs.sendMessage(tab.id, { type: 'EXPORT_SELECTED_RAW', ids: [...selectedChatIds], useFolder }) as { ok?: boolean; count?: number; cancelled?: boolean; errorMessage?: string } | undefined
         setStatus(response?.ok ? `${response.count ?? 0} Chats heruntergeladen${response.cancelled ? ' (abgebrochen).' : '.'}` : (response?.errorMessage || 'Export fehlgeschlagen.'))
     }
     catch { setStatus('Export fehlgeschlagen.') }
 })
+
+async function requestDownloadPermission(): Promise<boolean> {
+    try {
+        return await chrome.permissions.request({ permissions: ['downloads'] })
+    }
+    catch {
+        return false
+    }
+}
 cancelExportButton?.addEventListener('click', async () => {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
     if (tab.id) await chrome.tabs.sendMessage(tab.id, { type: 'CANCEL_EXPORT' }).catch(() => undefined)

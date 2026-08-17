@@ -12,6 +12,7 @@ import {
     captureConversationById,
     captureCurrentConversation,
     captureCurrentConversationRecord,
+    downloadCurrentConversationJson,
     formatCaptureError,
 } from './raw-download'
 
@@ -51,7 +52,7 @@ window.addEventListener('message', (event: MessageEvent<unknown>) => {
 
 chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
     if (isDownloadRequest(message)) {
-        captureCurrentConversation().then(result => sendResponse(result)).catch((error: unknown) => sendResponse({
+        captureCurrentConversation({ useFolder: message.useFolder === true }).then(result => sendResponse(result)).catch((error: unknown) => sendResponse({
             ok: false,
             errorMessage: formatCaptureError(error),
             errorCode: error instanceof Error && 'code' in error ? String(error.code) : 'UNKNOWN',
@@ -66,7 +67,7 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
     }
     if (isSelectedExportRequest(message)) {
         exportCancelled = false
-        exportSelected(message.ids)
+        exportSelected(message.ids, message.useFolder === true)
             .then(result => sendResponse(result))
             .catch((error: unknown) => sendResponse({ ok: false, errorMessage: formatCaptureError(error) }))
         return true
@@ -77,13 +78,19 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
         return false
     }
     if (isDerivedExportRequest(message)) {
+        if (message.format === 'json') {
+            downloadCurrentConversationJson()
+                .then(response => sendResponse(response))
+                .catch((error: unknown) => sendResponse({ ok: false, errorMessage: formatCaptureError(error) }))
+            return true
+        }
         captureCurrentConversationRecord()
             .then((record) => {
                 if (message.format === 'clipboard') {
                     const rendered = renderDerivedExport(record, 'text')
                     return copyText(rendered.content).then(() => ({ ok: true, format: message.format }))
                 }
-                const rendered = renderDerivedExport(record, message.format)
+                const rendered = renderDerivedExport(record, message.format as DerivedFormat)
                 downloadDerivedText(rendered.fileName, rendered.mimeType, rendered.content)
                 return { ok: true, fileName: rendered.fileName, format: message.format }
             })
@@ -120,20 +127,20 @@ function isPopupPing(value: unknown): value is { type: 'POPUP_PING' } {
     return typeof value === 'object' && value !== null && 'type' in value && value.type === 'POPUP_PING'
 }
 
-function isDownloadRequest(value: unknown): value is { type: 'DOWNLOAD_CURRENT_CONVERSATION' } {
+function isDownloadRequest(value: unknown): value is { type: 'DOWNLOAD_CURRENT_CONVERSATION'; useFolder?: boolean } {
     return typeof value === 'object' && value !== null && 'type' in value && value.type === 'DOWNLOAD_CURRENT_CONVERSATION'
 }
 
-function isDerivedExportRequest(value: unknown): value is { type: 'EXPORT_CURRENT'; format: DerivedFormat | 'clipboard' } {
+function isDerivedExportRequest(value: unknown): value is { type: 'EXPORT_CURRENT'; format: DerivedFormat | 'clipboard' | 'json' } {
     if (typeof value !== 'object' || value === null || !('type' in value) || value.type !== 'EXPORT_CURRENT' || !('format' in value)) return false
-    return value.format === 'text' || value.format === 'markdown' || value.format === 'html' || value.format === 'clipboard'
+    return value.format === 'text' || value.format === 'markdown' || value.format === 'html' || value.format === 'clipboard' || value.format === 'json'
 }
 
 function isExportAllRequest(value: unknown): value is { type: 'LIST_CONVERSATIONS' } {
     return typeof value === 'object' && value !== null && 'type' in value && value.type === 'LIST_CONVERSATIONS'
 }
 
-function isSelectedExportRequest(value: unknown): value is { type: 'EXPORT_SELECTED_RAW'; ids: string[] } {
+function isSelectedExportRequest(value: unknown): value is { type: 'EXPORT_SELECTED_RAW'; ids: string[]; useFolder?: boolean } {
     return typeof value === 'object' && value !== null && 'type' in value && value.type === 'EXPORT_SELECTED_RAW'
         && 'ids' in value && Array.isArray(value.ids) && value.ids.every(id => typeof id === 'string')
 }
@@ -142,11 +149,11 @@ function isCancelExportRequest(value: unknown): value is { type: 'CANCEL_EXPORT'
     return typeof value === 'object' && value !== null && 'type' in value && value.type === 'CANCEL_EXPORT'
 }
 
-async function exportSelected(ids: string[]) {
+async function exportSelected(ids: string[], useFolder: boolean) {
     let count = 0
     for (const id of ids) {
         if (exportCancelled) return { ok: true, count, cancelled: true }
-        await captureConversationById(id)
+        await captureConversationById(id, { useFolder })
         count += 1
         await new Promise(resolve => window.setTimeout(resolve, 80))
     }

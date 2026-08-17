@@ -14,6 +14,7 @@ Abre `chrome://extensions`, activa el modo de desarrollador y carga `dist-extens
 ## Funciones
 
 - JSON original como exportación primaria sin pérdida
+- Paquete del chat con JSON original, Markdown, manifiesto multimedia e imágenes locales
 - Exportación de un chat a texto, Markdown o HTML
 - Copia de texto al portapapeles
 - Export All con lista de chats, selección individual o total y cancelación

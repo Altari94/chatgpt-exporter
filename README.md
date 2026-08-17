@@ -7,18 +7,18 @@
 [![license][license-image]][license-url]
 [![release][release-image]][release-url]
 
-[license-image]: https://img.shields.io/github/license/pionxzh/chatgpt-exporter?color=red
-[license-url]: https://github.com/pionxzh/chatgpt-exporter/blob/master/LICENSE
-[release-image]: https://img.shields.io/github/v/release/pionxzh/chatgpt-exporter?color=blue
-[release-url]: https://github.com/pionxzh/chatgpt-exporter/releases/latest
+[license-image]: https://img.shields.io/github/license/Altari94/chatgpt-exporter?color=red
+[license-url]: https://github.com/Altari94/chatgpt-exporter/blob/master/LICENSE
+[release-image]: https://img.shields.io/github/v/release/Altari94/chatgpt-exporter?color=blue
+[release-url]: https://github.com/Altari94/chatgpt-exporter/releases/latest
 
 Documentation: [Deutsch](./README.de.md) · [English](./README.md) · [Español](./README.es.md)
 
-Project context: [Project intent](./docs/PROJECT_INTENT.md) · [Developer guide](./docs/DEVELOPER_GUIDE.md) · [Fork maintenance](./docs/FORK_MAINTENANCE.md) · [Upstream comparison](./docs/UPSTREAM_VS_FORK.md) · [Branding](./docs/BRANDING.md)
+Installation: [English](./docs/INSTALLATION.md) · [Deutsch](./docs/INSTALLATION.de.md) · [Español](./docs/INSTALLATION.es.md)
 
-Pre-release roadmap: [v0.10 Medienvollständiger Capture](./docs/MILESTONE_V0.10.md)
+Project context: [Project intent](./docs/PROJECT_INTENT.md) · [Developer guide](./docs/DEVELOPER_GUIDE.en.md) · [Fork maintenance](./docs/FORK_MAINTENANCE.md) · [Upstream comparison](./docs/UPSTREAM_VS_FORK.md) · [Branding](./docs/BRANDING.md)
 
-![image](https://github.com/pionxzh/chatgpt-exporter/assets/9910706/1c864670-7912-4484-b4be-bdf5dde51557)
+Release notes: [v1.0.0](./CHANGELOG.md) · [release checklist](./docs/RELEASE_CHECKLIST.md)
 
 ## Install the Chrome Extension (recommended)
 
@@ -26,7 +26,7 @@ The Chrome Extension is the official user-facing product of this fork. It does n
 
 ### From a release artifact
 
-1. Download the `extension` artifact from the project release.
+1. Download the `chatgpt-exporter-v1.0.0.zip` asset from the latest project release and unzip it.
 2. Open `chrome://extensions`.
 3. Enable **Developer mode**.
 4. Choose **Load unpacked** and select the extracted `extension` directory.
@@ -46,7 +46,15 @@ Then load `dist-extension/` through **Load unpacked**.
 1. Open a normal ChatGPT conversation at `chatgpt.com/c/...`.
 2. Open the ChatGPT Exporter popup.
 3. Click **Download chat package**.
-4. The package contains unchanged raw JSON, detailed Markdown, a media manifest and local assets.
+4. Approve Chrome's download permission when prompted. The package contains unchanged raw JSON, detailed Markdown, a media manifest and local assets.
+
+```text
+Downloads/ChatGPT Exporter/{created}__{title-slug}__{id8}/
+├── conversation.json  # unchanged API response
+├── conversation.md    # readable transcript; images are relative local links
+├── media.json         # media-to-source mapping and download outcome
+└── assets/            # downloaded media files
+```
 
 Use **Raw JSON** in the single-chat formats section when only the original JSON file is needed.
 
@@ -61,6 +69,29 @@ Enter an `http://` or `https://` endpoint in the popup and save it. Chrome asks 
 The original userscript remains in `dist/chatgpt.user.js` for compatibility with the upstream project and existing installations. It is not the recommended installation path for new users and requires a userscript manager such as Tampermonkey.
 
 The fork's development and documentation target the Chrome Extension first.
+
+## Development and release
+
+Run the full local release gate before creating a tag:
+
+```bash
+corepack pnpm install --frozen-lockfile
+corepack pnpm lint
+corepack pnpm test
+corepack pnpm test:core
+corepack pnpm test:extension
+corepack pnpm release:build
+```
+
+The build reads its version from `package.json` and produces `dist-release/chatgpt-exporter-v{version}/` plus a matching `.zip` upload artifact. A pushed `vX.Y.Z` tag runs the same verification in GitHub Actions; the GitHub release itself is created deliberately after that check succeeds. See [Extension Build](./docs/EXTENSION_BUILD.md), [Release Checklist](./docs/RELEASE_CHECKLIST.md), [Security](./SECURITY.md), and [Support](./SUPPORT.md).
+
+## Fork and upstream
+
+This is an independent MIT-licensed fork of [pionxzh/chatgpt-exporter](https://github.com/pionxzh/chatgpt-exporter). Its Chrome-first, raw-first product line is intentionally not a complete feature-for-feature replacement of the upstream userscript. See [Upstream comparison](./docs/UPSTREAM_VS_FORK.md) and [Fork maintenance](./docs/FORK_MAINTENANCE.md).
+
+## Legacy userscript reference
+
+The remaining sections below document formats and capabilities inherited from the upstream userscript. They are retained for provenance and existing userscript users; the installation and feature contract for this fork is defined by the Chrome Extension sections above.
 
 #
 

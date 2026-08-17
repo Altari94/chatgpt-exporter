@@ -8,6 +8,8 @@
 - [ ] Berechtigungen und Datenschutz dokumentiert
 - [ ] Upstream-Herkunft und Fork-Abweichungen dokumentiert
 - [ ] Changelog-Eintrag ergänzt
+- [ ] Versionswerte in `package.json`, `extension/manifest.json`, Popup und Release-Build stimmen überein
+- [ ] `SECURITY.md` und Support-Hinweise sind aktuell
 
 ## Qualität
 
@@ -35,5 +37,7 @@
 - [ ] Keine privaten Chats oder Tokens im Diff
 - [ ] Keine lokalen Pfade in Release-Dokumentation
 - [ ] Lizenz und Attribution sichtbar
-- [ ] Commit und Tag erstellt
+- [ ] Release-Commit erstellt
+- [ ] Passender Tag `vX.Y.Z` erstellt und der Workflow **Verify release tag** ist erfolgreich
+- [ ] GitHub Release erst danach manuell erstellt; ZIP-Artefakt hochgeladen
 - [ ] Release-Artefakte aus sauberem Checkout erzeugt

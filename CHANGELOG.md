@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.0 – First stable Chrome Extension release
+
+- establishes the Chrome extension as the supported installation path; no userscript manager is required;
+- ships portable chat packages containing the unchanged conversation JSON, detailed Markdown, a media manifest and locally downloaded assets;
+- keeps Raw JSON, Text, Markdown, HTML, clipboard, cancellable multi-chat export and explicit HTTP destinations available;
+- provides German, English and Spanish popup UI, reproducible release artifacts, automated checks and documented privacy/security boundaries;
+- retains the legacy userscript in the source repository for compatibility with the upstream project and existing userscript installations; Chrome-extension release ZIPs do not alter or ship that update path.
+
+This is the first stable release of the fork's independent Chrome-extension line. Historical upstream userscript releases remain below for provenance.
+
 ## v0.10.0 – Portable chat packages with local media
 
 ### Added

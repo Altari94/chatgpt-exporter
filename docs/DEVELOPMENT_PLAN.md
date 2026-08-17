@@ -1,8 +1,8 @@
-# Entwicklungsplan: persönlicher Fork von ChatGPT Exporter
+# Entwicklungsplan: Chrome-first Fork von ChatGPT Exporter
 
-Status: Entwurf  
+Status: historische Entwicklungsplanung bis v0.8; aktueller stabiler Stand: v1.0.0
 Grundlage: Upstream-Stand `pionxzh/chatgpt-exporter`, Fork `Altari94/chatgpt-exporter`  
-Branch: `feat/second-brain-capture`
+Branch-Modell: `feat/*` für Änderungen, Release-Tags für veröffentlichte Stände
 
 ## 1. Ausgangslage
 
@@ -56,7 +56,7 @@ Userscript Adapter     Browser-Extension Adapter
 bleibt nutzbar         wird schrittweise ergänzt
 ```
 
-Die persönliche Second-Brain-Anbindung konsumiert diese generische HTTP-Schnittstelle. Sie bleibt außerhalb dieses Projekts und enthält keine private Vault-Konfiguration im Quelltext.
+Beliebige lokale oder externe Systeme können diese generische HTTP-Schnittstelle konsumieren. Integrationen bleiben außerhalb dieses Projekts; der Quelltext enthält keine private Konfiguration.
 
 ## 3. Meilensteine
 
@@ -141,12 +141,12 @@ Akzeptanz:
 - Content Script, Service Worker und UI kommunizieren über typisierte Nachrichten.
 - keine unnötige Speicherung von Conversation-Inhalten.
 
-### M5 – Second-Brain-Integration und Sicherheitsprüfung
+### M5 – Integrations- und Sicherheitsprüfung
 
 Ergebnis:
 
 - dokumentiertes Endpoint-Schema und Beispielserver/Mock
-- Integration in Marcels Second-Brain-Workflow als separater Verbraucher
+- dokumentierte Integration eines externen Verbrauchers als separater Referenzfall
 - Prüfung von CORS, Authentifizierung, Replay-/Doppelversand und Datenschutz
 - klare Installations- und Migrationsdokumentation
 
@@ -169,7 +169,7 @@ Akzeptanz:
 
 - sauberer Release-Commit und reproduzierbarer Build.
 - keine bekannten kritischen Sicherheits- oder Datenverlustfehler.
-- Installationspfad für persönliche Nutzung ist dokumentiert.
+- Installationspfad für neue Nutzer ist dokumentiert.
 
 ## 4. Wichtige Architekturentscheidungen
 
@@ -184,7 +184,7 @@ Akzeptanz:
 ## 5. Offene Entscheidungen vor M1/M3
 
 - Soll der HTTP-Endpoint nur normalisierte Daten oder zusätzlich das rohe API-JSON erhalten?
-- Welches Payload-Format braucht der Second-Brain-Verbraucher genau?
+- Welche Felder benötigt ein externer Verbraucher genau?
 - Wird Authentifizierung zunächst über lokalen Endpoint, statischen Header oder später über ein sichereres Verfahren gelöst?
 - Soll die Extension nur ChatGPT unterstützen oder später weitere Chat-Anbieter abstrahieren?
 - Welche Mindestbrowser (Chrome/Firefox/Edge) werden für M4 verbindlich unterstützt?

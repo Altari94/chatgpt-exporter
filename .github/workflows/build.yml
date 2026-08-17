@@ -1,30 +1,37 @@
-name: Release
+name: Verify release tag
 
 on:
   push:
-    branches:
-      - '**'
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
 
 jobs:
   release:
-    if: "contains(github.event.head_commit.message, 'chore: release')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 8.14.1
 
       - name: Use Node.js v20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: https://registry.npmjs.org/
           cache: pnpm
 
-      - run: pnpm install
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Verify release tag version
+        run: test "${GITHUB_REF_NAME#v}" = "$(node -p \"require('./package.json').version\")"
+
+      - run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm run lint
@@ -32,27 +39,11 @@ jobs:
       - name: Test
         run: pnpm run test
 
-      - name: Build
-        run: pnpm run build
+      - name: Core tests
+        run: pnpm run test:core
 
-      - name: Git commit
-        id: commit
-        run: |
-          git config --local user.email github-actions[bot]@users.noreply.github.com
-          git config --local user.name github-actions[bot]
-          git config --global core.autocrlf true
-          git config --global core.safecrlf false
-          git add .
-          git commit -m "chore: ci build" -a
-        continue-on-error: true
+      - name: Extension tests
+        run: pnpm run test:extension
 
-      - name: Git push
-        uses: ad-m/github-push-action@master
-        if: ${{ steps.commit.outcome == 'success' }}
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-
-      - name: Log
-        if: ${{ steps.commit.outcome != 'success' }}
-        run: echo Nothing to commit.
+      - name: Build release artifact
+        run: pnpm run release:build

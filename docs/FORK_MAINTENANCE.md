@@ -32,4 +32,4 @@ Vor einem Release müssen `pnpm test`, `pnpm lint`, `pnpm test:extension`, `pnpm
 
 ## Namensnennung und Lizenz
 
-Die Upstream-Herkunft wird in README, Lizenz und dieser Datei genannt. Eigene Änderungen stammen aus diesem Fork; der persönliche Maintainer-Fokus wird transparent als Projektintention beschrieben.
+Die Upstream-Herkunft wird in README, Lizenz und dieser Datei genannt. Eigene Änderungen stammen aus diesem Fork. Ableitungen müssen Lizenz, Copyright-Hinweise und Herkunft sichtbar beibehalten.

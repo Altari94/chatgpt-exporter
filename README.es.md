@@ -23,4 +23,4 @@ Abre `chrome://extensions`, activa el modo de desarrollador y carga `dist-extens
 
 Las capturas PNG y la exportación ZIP por lotes no forman parte deliberadamente del producto Chrome. Los usuarios nuevos no necesitan Tampermonkey.
 
-Más información: [Build de la extensión](./docs/EXTENSION_BUILD.md), [hito v0.9](./docs/MILESTONE_V0.9.md), [seguridad](./docs/SECURITY_AND_PRIVACY.md), [branding](./docs/BRANDING.md).
+Más información: [Build de la extensión](./docs/EXTENSION_BUILD.md), [cambios](./CHANGELOG.md), [seguridad](./docs/SECURITY_AND_PRIVACY.md), [branding](./docs/BRANDING.md).

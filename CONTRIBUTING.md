@@ -1,6 +1,6 @@
 # Contributing
 
-Beiträge sind willkommen, auch wenn dieses Repository primär als persönlicher Fork gepflegt wird.
+Beiträge sind willkommen. Das Repository wird maintainergeführt gepflegt; kleine, klar abgegrenzte und getestete Verbesserungen sind besonders willkommen.
 
 ## Vor einem Pull Request
 

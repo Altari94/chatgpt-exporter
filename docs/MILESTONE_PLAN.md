@@ -2,13 +2,13 @@
 
 ## Produktziel
 
-Eine stabile Chrome Extension erfasst eine ChatGPT-Unterhaltung originalgetreu und lädt sie mit einer Nutzeraktion als Rohmaterial herunter. Der Capture-Kern bleibt unabhängig von der persönlichen Second-Brain-Architektur und bietet generische Exportziele.
+Eine stabile Chrome Extension erfasst eine ChatGPT-Unterhaltung originalgetreu und lädt sie mit einer Nutzeraktion als Rohmaterial herunter. Der Capture-Kern bleibt unabhängig von konkreten Zielsystemen und bietet generische Exportziele.
 
-Persönliche Wissenssysteme sind kein Bestandteil dieses Repositories, sondern mögliche Verbraucher der Capture-Schnittstelle.
+Individuelle Arbeitsabläufe und Zielsysteme sind kein Bestandteil dieses Repositories, sondern mögliche Verbraucher der Capture-Schnittstelle.
 
 ## Versionierungsregeln
 
-Jeder abgeschlossene Meilenstein erhält einen Abschluss-Commit und einen Git-Tag `v0.x.0`. Innerhalb eines Meilensteins sind mehrere Conventional-Commits erlaubt. Der Tag ist das Akzeptanz-Gate.
+Jeder abgeschlossene Meilenstein erhält einen Abschluss-Commit und einen Git-Tag nach SemVer (`vMAJOR.MINOR.PATCH`). Innerhalb eines Meilensteins sind mehrere Conventional-Commits erlaubt. Der Tag ist das Akzeptanz-Gate.
 
 ## Architekturgrenzen
 
@@ -147,7 +147,7 @@ Transportieren fertige Capture-Artefakte und parsen keine Conversations. Erste Z
 
 `feat(capture): add one-click raw conversation download` — `v0.4.0`
 
-Ab diesem Meilenstein ist dein persönliches Hauptziel erreicht.
+Ab diesem Meilenstein ist der erste nutzbare Chrome-Capture-Workflow erreicht.
 
 ## v0.5 – Bestehende Exportfunktionen erhalten
 
@@ -277,10 +277,9 @@ Damit ist die offene Community-Schnittstelle fertig.
 
 ## Nicht Bestandteil dieses Projekts
 
-- Second-Brain-Datenmodell
-- Obsidian-Vault-Logik
-- Knowledge Compiler
-- persönliche Archivierungsregeln
-- automatische Wissensableitung
+- konkrete Zielsystem-Integrationen
+- anwendungsspezifische Datenmodelle
+- individuelle Archivierungsregeln
+- automatische Inhaltsanalyse oder Wissensableitung
 
 Diese Funktionen gehören in ein separates Projekt und konsumieren nur die dokumentierte Capture-Schnittstelle.

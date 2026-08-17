@@ -15,11 +15,12 @@ In Chrome `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dis
 corepack pnpm release:build
 ```
 
-Der reproduzierbare Build erzeugt `dist-release/chatgpt-exporter-v0.10.0/` mit:
+Der reproduzierbare Build liest die Version aus `package.json` und erzeugt für v1.0.0 `dist-release/chatgpt-exporter-v1.0.0/` mit:
 
 - `extension/`: primäres Chrome-Extension-Artefakt
-- `legacy-userscript/chatgpt.user.js`: Kompatibilitätsartefakt für bestehende Installationen
 - `RELEASE-METADATA.json`: Artefaktrollen und Build-Befehle
+
+Zusätzlich entsteht `dist-release/chatgpt-exporter-v1.0.0.zip`. Dieses ZIP ist das Artefakt für den manuellen Upload in einen GitHub Release und enthält das oben genannte Verzeichnis. Der Upstream-kompatible Legacy-Userscript-Build wird bewusst nicht in Chrome-Extension-Releases gepackt, damit dessen eigener Updatepfad nicht versehentlich mit der Extension-Version vermischt wird.
 
 Der Raw-Download erzeugt bei vorhandenen Bildreferenzen zusätzlich einzelne
 Bilddateien und eine `{chat}.media.json`-Datei. Diese Sidecar-Datei ordnet jede
@@ -54,11 +55,20 @@ stabile Kurzpräfix der Conversation-ID. Die vollständige ID bleibt in
 eine Optionen-Oberfläche ergänzt werden; dabei bleibt eine ID-Komponente
 verpflichtend, damit Exporte eindeutig bleiben.
 
-Ohne Zustimmung bleibt der einzelne Download als Fallback verfügbar; die
-Extension verlangt die Berechtigung nicht für Capture, HTTP oder andere
+Ohne Zustimmung bleiben Capture, Einzeldateidownload und HTTP-Export nutzbar;
+die Extension verlangt die Berechtigung nicht bei Installation oder für andere
 Funktionen.
 
 `dist-release/` ist absichtlich nicht versioniert. Das Release wird aus einem sauberen Git-Checkout erzeugt.
+
+## GitHub-Release
+
+1. Alle Qualitätsgates ausführen und die manuelle Checkliste abhaken.
+2. Einen geprüften Release-Commit pushen und einen passenden Tag erstellen, zum Beispiel `v1.0.0`.
+3. Den Tag pushen. Der Workflow **Verify release tag** prüft Version, Lint, Tests und den reproduzierbaren Release-Build.
+4. Erst nach erfolgreichem Workflow einen GitHub Release für denselben Tag erstellen und das lokal erzeugte ZIP aus `dist-release/` als Asset hochladen.
+
+Die Veröffentlichung ist bewusst ein manueller, überprüfbarer Schritt: Ein Tag erzeugt keinen stillen öffentlichen Release und kein Workflow schreibt zurück in den Branch.
 
 ## Qualitätsgates
 

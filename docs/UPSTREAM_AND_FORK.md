@@ -21,7 +21,7 @@ Dieses Repository ist ein Fork von [`pionxzh/chatgpt-exporter`](https://github.c
 
 Die Chrome Extension ist der empfohlene Nutzerweg. Das Userscript bleibt als Legacy-Artefakt für bestehende Installationen und Upstream-Kompatibilität erhalten, wird aber nicht als gleichwertige neue Installation beworben.
 
-Die Release-Version `v0.8.0` bezeichnet die Fork-/Extension-Linie. Das Legacy-Userscript behält die Upstream-Paketversion, damit bestehende Userscript-Updatepfade nicht ungewollt verändert werden.
+Die Release-Version `v1.0.0` bezeichnet die stabile Fork-/Extension-Linie. Das Legacy-Userscript bleibt ein separates Kompatibilitätsartefakt und ist kein automatischer Updatepfad der Chrome-Extension.
 
 ## Änderungsstrategie
 

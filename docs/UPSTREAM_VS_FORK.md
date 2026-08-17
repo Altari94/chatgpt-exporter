@@ -25,7 +25,7 @@ Der Fork übernimmt die bewährte Rohdatenidee und verschiebt die Nutzeroberflä
 - Deutsch, Englisch und Spanisch im Popup
 - reproduzierbarer Extension- und Release-Build
 
-Bewusst entfernt beziehungsweise nicht portiert: PNG-Screenshot und ZIP-Batch-Export. Sie erhöhen die Fragilität oder sind für den Second-Brain-Rohdatenworkflow nicht erforderlich.
+Bewusst entfernt beziehungsweise nicht portiert: PNG-Screenshot und ZIP-Batch-Export. Sie erhöhen die Fragilität und sind für die portable, medienverknüpfte Archivstruktur nicht notwendig.
 
 ## Warum Upstream verwenden?
 

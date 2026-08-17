@@ -9,7 +9,7 @@ corepack pnpm install --frozen-lockfile
 corepack pnpm build:extension
 ```
 
-Danach `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dist-extension/` als entpackte Erweiterung laden.
+Danach `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dist-extension/` als entpackte Erweiterung laden. Ohne lokalen Checkout kann stattdessen das `extension/`-Verzeichnis aus dem ZIP-Artefakt des aktuellen GitHub-Releases geladen werden.
 
 ## Funktionen
 
@@ -23,4 +23,4 @@ Danach `chrome://extensions` öffnen, den Entwicklermodus aktivieren und `dist-e
 
 PNG-Screenshots und ZIP-Batch-Export gehören bewusst nicht zum Chrome-Produkt. Tampermonkey ist für neue Nutzer nicht erforderlich.
 
-Weitere Details: [Extension-Build](./docs/EXTENSION_BUILD.md), [v0.9-Milestone](./docs/MILESTONE_V0.9.md), [Sicherheitsprüfung](./docs/SECURITY_AND_PRIVACY.md), [Branding](./docs/BRANDING.md).
+Weitere Details: [Extension-Build](./docs/EXTENSION_BUILD.md), [Changelog](./CHANGELOG.md), [Sicherheitsprüfung](./docs/SECURITY_AND_PRIVACY.md), [Branding](./docs/BRANDING.md).
